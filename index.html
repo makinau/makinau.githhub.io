@@ -5,42 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inici - Makinau</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: system-ui, -apple-system, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      background-color: #f4f4f9;
-      color: #333;
+      padding: 1.5rem;
+      background:
+        radial-gradient(ellipse at top, rgba(37, 99, 235, 0.18), transparent 55%),
+        #0b1120;
+      color: #e5e7eb;
     }
+
     .card {
-      background: white;
-      padding: 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: min(100%, 26rem);
+      padding: clamp(1.75rem, 6vw, 2.5rem);
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid #263248;
+      border-radius: 1.25rem;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
       text-align: center;
     }
+
+    h1 {
+      margin: 0 0 1.5rem;
+      font-size: clamp(1.75rem, 6vw, 2.25rem);
+      letter-spacing: -0.04em;
+    }
+
     a.boto {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.75rem 1.5rem;
-      background-color: #2563eb;
+      display: block;
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 0.9rem 1rem;
+      background: #2563eb;
       color: white;
       text-decoration: none;
-      border-radius: 8px;
+      border: 1px solid transparent;
+      border-radius: 0.75rem;
       font-weight: 600;
+      transition: background-color 160ms ease, transform 160ms ease;
     }
+
     a.boto:hover {
       background-color: #1d4ed8;
+      transform: translateY(-2px);
+    }
+
+    a.boto:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      a.boto {
+        transition: none;
+      }
     }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>Benvingut/da</h1>
-    <p>Accedeix a l'aplicació de gestió de casa:</p>
     <a class="boto" href="https://makinau.github.io/OurHouse/">⌂ Entrar a OurHouse</a>
     <a class="boto" href="https://makinau.github.io/MyUni/">Entrar a MyUni</a>
   </div>
