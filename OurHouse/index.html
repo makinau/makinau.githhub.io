@@ -168,7 +168,7 @@
       const { url, anonKey } = window.OURHOUSE_SUPABASE_CONFIG;
       const supabase = url && anonKey && window.supabase
         ? window.supabase.createClient(url, anonKey, {
-          auth: { storage: window.sessionStorage, persistSession: true, autoRefreshToken: true }
+          auth: { storage: window.localStorage, persistSession: true, autoRefreshToken: true }
         })
         : null;
       const garageTypes = {

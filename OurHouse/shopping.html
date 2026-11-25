@@ -296,7 +296,9 @@
     const SHOPPING_ITEMS_TABLE = "shopping_items";
     const SHOPPING_STORES_TABLE = "shopping_stores";
     const ITEM_STORES_TABLE = "shopping_item_stores";
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: { storage: window.localStorage, persistSession: true, autoRefreshToken: true }
+    });
     const itemForm = document.querySelector("#item-form");
     const itemNameInput = document.querySelector("#item-name");
     const storeForm = document.querySelector("#store-form");

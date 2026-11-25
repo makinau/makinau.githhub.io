@@ -2,7 +2,8 @@
 
 OurHouse stores household data in Supabase so authorized family members can use
 the same data from different browsers and devices. The Supabase Auth session is
-kept in `sessionStorage`; household records and PDFs are stored in Supabase.
+kept in `localStorage` and shared with the other projects on this site;
+household records and PDFs are stored in Supabase.
 
 ## Supabase setup
 
