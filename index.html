@@ -33,6 +33,34 @@
       text-align: center;
     }
 
+    .page {
+      width: min(100%, 26rem);
+    }
+
+    a.shopping-link {
+      display: block;
+      margin-bottom: 1rem;
+      padding: 0.9rem 1rem;
+      background: #dc2626;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border: 1px solid transparent;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      transition: background-color 160ms ease, transform 160ms ease;
+    }
+
+    a.shopping-link:hover {
+      background-color: #b91c1c;
+      transform: translateY(-2px);
+    }
+
+    a.shopping-link:focus-visible {
+      outline: 3px solid #fca5a5;
+      outline-offset: 3px;
+    }
+
     h1 {
       margin: 0 0 1.5rem;
       font-size: clamp(1.75rem, 6vw, 2.25rem);
@@ -58,23 +86,42 @@
       transform: translateY(-2px);
     }
 
+    a.boto.ourhouse {
+      background-color: #16a34a;
+    }
+
+    a.boto.ourhouse:hover {
+      background-color: #15803d;
+    }
+
     a.boto:focus-visible {
       outline: 3px solid #93c5fd;
       outline-offset: 3px;
+    }
+
+    a.boto.ourhouse:focus-visible {
+      outline-color: #86efac;
     }
 
     @media (prefers-reduced-motion: reduce) {
       a.boto {
         transition: none;
       }
+
+      a.shopping-link {
+        transition: none;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Benvingut/da</h1>
-    <a class="boto" href="https://makinau.github.io/OurHouse/">⌂ Entrar a OurHouse</a>
-    <a class="boto" href="https://makinau.github.io/MyUni/">Entrar a MyUni</a>
+  <div class="page">
+    <a class="shopping-link" href="shopping.html">🛒 Llista de la compra</a>
+    <div class="card">
+      <h1>Benvingut/da</h1>
+      <a class="boto ourhouse" href="https://makinau.github.io/OurHouse/">⌂ Entrar a OurHouse</a>
+      <a class="boto" href="https://makinau.github.io/MyUni/">Entrar a MyUni</a>
+    </div>
   </div>
 </body>
 </html>

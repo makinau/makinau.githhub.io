@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Llista de la compra - Makinau</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.5rem;
+      background:
+        radial-gradient(ellipse at top, rgba(37, 99, 235, 0.18), transparent 55%),
+        #0b1120;
+      color: #e5e7eb;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    main {
+      width: min(100%, 42rem);
+      margin: 0 auto;
+    }
+
+    a, button {
+      font: inherit;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #bfdbfe;
+    }
+
+    .card {
+      margin-bottom: 1rem;
+      padding: clamp(1.25rem, 5vw, 2rem);
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid #263248;
+      border-radius: 1.25rem;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    h1, h2 {
+      margin-top: 0;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      margin-bottom: 0.4rem;
+      font-size: clamp(1.8rem, 6vw, 2.4rem);
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .muted, .empty {
+      color: #9ca3af;
+    }
+
+    .muted {
+      margin: 0;
+    }
+
+    form {
+      display: flex;
+      gap: 0.65rem;
+    }
+
+    input, button {
+      min-height: 2.8rem;
+      border-radius: 0.65rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      min-width: 0;
+      padding: 0.65rem 0.8rem;
+      color: #f9fafb;
+      background: #0b1120;
+      border: 1px solid #475569;
+    }
+
+    button {
+      padding: 0.65rem 1rem;
+      color: white;
+      background: #2563eb;
+      border: 1px solid transparent;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:focus-visible, a:focus-visible, input:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 3px;
+    }
+
+    .store-form button {
+      flex: 0 0 auto;
+    }
+
+    .store-list, .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .store-chip, .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.6rem;
+      color: #dbeafe;
+      background: #1e3a5f;
+      border: 1px solid #31547b;
+      border-radius: 999px;
+      font-size: 0.85rem;
+    }
+
+    .store-chip button {
+      min-height: 0;
+      padding: 0;
+      color: #fecaca;
+      background: transparent;
+      border: 0;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .store-chip button:hover {
+      color: white;
+      background: transparent;
+    }
+
+    .shopping-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 0.75rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #263248;
+    }
+
+    .shopping-item:last-child {
+      border-bottom: 0;
+    }
+
+    .item-check {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin-top: 0.8rem;
+      accent-color: #2563eb;
+    }
+
+    .item-content {
+      min-width: 0;
+    }
+
+    .shopping-item.done input[type="text"] {
+      color: #9ca3af;
+      text-decoration: line-through;
+    }
+
+    .tag-editor {
+      margin-top: 0.6rem;
+    }
+
+    .tag-editor summary {
+      width: fit-content;
+      color: #bfdbfe;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .tag-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.65rem;
+    }
+
+    .tag-options label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    .tag-options input {
+      accent-color: #2563eb;
+    }
+
+    .delete-item {
+      min-height: 2.5rem;
+      padding: 0.45rem 0.7rem;
+      color: #fecaca;
+      background: transparent;
+      border-color: #7f1d1d;
+    }
+
+    .delete-item:hover {
+      background: #7f1d1d;
+    }
+
+    .empty {
+      margin-bottom: 0;
+    }
+
+    .status {
+      min-height: 1.4rem;
+      margin: 0.75rem 0 0;
+      color: #fca5a5;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 1rem;
+      }
+
+      .shopping-item {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .delete-item {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back-link" href="index.html">← Tornar a l’inici</a>
+    <header class="card">
+      <h1>Llista de la compra</h1>
+      <p class="muted">Organitza els articles per establiment.</p>
+    </header>
+
+    <section class="card" aria-labelledby="add-item-heading">
+      <h2 id="add-item-heading">Afegir un article</h2>
+      <form id="item-form">
+        <input id="item-name" type="text" maxlength="120" placeholder="Ex.: Pa" aria-label="Nom de l’article" required>
+        <button type="submit">Afegir</button>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="stores-heading">
+      <h2 id="stores-heading">Establiments i etiquetes</h2>
+      <form id="store-form" class="store-form">
+        <input id="store-name" type="text" maxlength="40" placeholder="Ex.: Mercat" aria-label="Nom de l’establiment" required>
+        <button type="submit">Afegir etiqueta</button>
+      </form>
+      <div id="store-list" class="store-list" aria-label="Establiments desats"></div>
+    </section>
+
+    <section class="card" aria-labelledby="list-heading">
+      <h2 id="list-heading">Articles</h2>
+      <div id="items-list"></div>
+      <p id="empty-message" class="empty">Encara no hi ha articles. Afegeix-ne un per començar.</p>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "makinau-shopping-list";
+    const itemForm = document.querySelector("#item-form");
+    const itemNameInput = document.querySelector("#item-name");
+    const storeForm = document.querySelector("#store-form");
+    const storeNameInput = document.querySelector("#store-name");
+    const storeList = document.querySelector("#store-list");
+    const itemsList = document.querySelector("#items-list");
+    const emptyMessage = document.querySelector("#empty-message");
+    const status = document.querySelector("#status");
+    let data = { items: [], stores: [] };
+
+    function showStorageError() {
+      status.textContent = "No s’han pogut desar els canvis en aquest navegador.";
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        status.textContent = "";
+      } catch {
+        showStorageError();
+      }
+    }
+
+    function load() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+        const parsed = JSON.parse(saved);
+        if (!parsed || !Array.isArray(parsed.items) || !Array.isArray(parsed.stores)) {
+          throw new Error("Format de dades no vàlid");
+        }
+        const validStores = parsed.stores.every((store) => typeof store === "string");
+        const validItems = parsed.items.every((item) =>
+          item &&
+          typeof item.id === "string" &&
+          typeof item.name === "string" &&
+          typeof item.done === "boolean" &&
+          Array.isArray(item.stores) &&
+          item.stores.every((store) => typeof store === "string")
+        );
+        if (!validStores || !validItems) {
+          throw new Error("Format de dades no vàlid");
+        }
+        data = parsed;
+      } catch {
+        status.textContent = "No s’ha pogut llegir la llista desada. Les dades desades no s’han modificat.";
+      }
+    }
+
+    function renderStores() {
+      storeList.replaceChildren();
+      data.stores.forEach((store) => {
+        const chip = document.createElement("span");
+        chip.className = "store-chip";
+        const name = document.createElement("span");
+        name.textContent = store;
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", `Eliminar l’etiqueta ${store}`);
+        remove.addEventListener("click", () => {
+          data.stores = data.stores.filter((entry) => entry !== store);
+          data.items.forEach((item) => {
+            item.stores = item.stores.filter((entry) => entry !== store);
+          });
+          save();
+          render();
+        });
+        chip.append(name, remove);
+        storeList.append(chip);
+      });
+    }
+
+    function renderItems() {
+      itemsList.replaceChildren();
+      emptyMessage.hidden = data.items.length > 0;
+
+      data.items.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = `shopping-item${item.done ? " done" : ""}`;
+
+        const check = document.createElement("input");
+        check.type = "checkbox";
+        check.className = "item-check";
+        check.checked = item.done;
+        check.setAttribute("aria-label", `Marcar ${item.name} com a comprat`);
+        check.addEventListener("change", () => {
+          item.done = check.checked;
+          save();
+          renderItems();
+        });
+
+        const content = document.createElement("div");
+        content.className = "item-content";
+        const name = document.createElement("input");
+        name.type = "text";
+        name.maxLength = 120;
+        name.value = item.name;
+        name.setAttribute("aria-label", "Editar nom de l’article");
+        name.addEventListener("change", () => {
+          const value = name.value.trim();
+          if (!value) {
+            name.value = item.name;
+            return;
+          }
+          item.name = value;
+          save();
+          renderItems();
+        });
+        content.append(name);
+
+        if (item.stores.length) {
+          const tags = document.createElement("div");
+          tags.className = "tags";
+          item.stores.forEach((store) => {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = store;
+            tags.append(tag);
+          });
+          content.append(tags);
+        }
+
+        if (data.stores.length) {
+          const details = document.createElement("details");
+          details.className = "tag-editor";
+          const summary = document.createElement("summary");
+          summary.textContent = `Etiquetes (${item.stores.length})`;
+          const options = document.createElement("div");
+          options.className = "tag-options";
+          data.stores.forEach((store) => {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = item.stores.includes(store);
+            checkbox.addEventListener("change", () => {
+              item.stores = checkbox.checked
+                ? [...item.stores, store]
+                : item.stores.filter((entry) => entry !== store);
+              save();
+              renderItems();
+            });
+            label.append(checkbox, document.createTextNode(store));
+            options.append(label);
+          });
+          details.append(summary, options);
+          content.append(details);
+        }
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "delete-item";
+        remove.textContent = "Eliminar";
+        remove.setAttribute("aria-label", `Eliminar ${item.name}`);
+        remove.addEventListener("click", () => {
+          data.items = data.items.filter((entry) => entry.id !== item.id);
+          save();
+          renderItems();
+        });
+
+        row.append(check, content, remove);
+        itemsList.append(row);
+      });
+    }
+
+    function render() {
+      renderStores();
+      renderItems();
+    }
+
+    itemForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = itemNameInput.value.trim();
+      if (!name) return;
+      data.items.push({ id: crypto.randomUUID(), name, stores: [], done: false });
+      save();
+      renderItems();
+      itemForm.reset();
+      itemNameInput.focus();
+    });
+
+    storeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = storeNameInput.value.trim();
+      if (!name) return;
+      if (data.stores.some((store) => store.toLocaleLowerCase() === name.toLocaleLowerCase())) {
+        status.textContent = "Aquest establiment ja existeix.";
+        return;
+      }
+      data.stores.push(name);
+      save();
+      render();
+      storeForm.reset();
+      storeNameInput.focus();
+    });
+
+    load();
+    render();
+  </script>
+</body>
+</html>
