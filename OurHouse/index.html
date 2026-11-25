@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#254f45">
+  <title>OurHouse — La casa, ben endreçada</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="layout" hidden>
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">⌂</span> OurHouse</div>
+      <p class="nav-label">El meu espai</p>
+      <nav class="nav" aria-label="Seccions de la casa">
+        <button class="active" type="button" data-section="resum"><span class="nav-icon" aria-hidden="true">◫</span> Resum</button>
+        <button type="button" data-section="pis"><span class="nav-icon" aria-hidden="true">⌂</span> El pis</button>
+        <button type="button" data-section="garatge"><span class="nav-icon" aria-hidden="true">▤</span> Garatge</button>
+        <button type="button" data-section="serveis"><span class="nav-icon" aria-hidden="true">◉</span> Serveis</button>
+        <button type="button" data-section="planols"><span class="nav-icon" aria-hidden="true">▧</span> Plànols</button>
+        <button type="button" data-section="documents"><span class="nav-icon" aria-hidden="true">▣</span> Documents</button>
+      </nav>
+      <div class="sidebar-note">
+        <strong>Tot a mà, a casa.</strong>
+        La informació es desa al servidor i és accessible per a la família autoritzada.
+      </div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div class="profile"><span class="avatar" aria-hidden="true">⌂</span><span>La meva llar</span></div>
+        <div>
+          <button class="download-button" type="button" id="download-json">
+            <span aria-hidden="true">↓</span> Descarregar JSON
+          </button>
+          <button class="secondary-button" type="button" id="sign-out">Tancar sessió</button>
+        </div>
+      </div>
+      <div class="content">
+        <header class="welcome">
+          <p class="eyebrow">Benvingut/da a OurHouse</p>
+          <h1>La casa, ben endreçada.</h1>
+          <p class="welcome-copy">Un lloc senzill per tenir a mà la informació important de casa.</p>
+        </header>
+
+        <section class="section active" id="section-resum">
+          <div class="section-heading">
+            <div><h2>El teu espai de casa</h2><p class="section-subtitle">Tria una secció per consultar o actualitzar la informació.</p></div>
+          </div>
+          <div class="item-grid">
+            <article class="item-card">
+              <p class="item-title">🏠 El pis</p>
+              <p class="item-detail">Dades de l'habitatge, manteniment, garanties i documents importants.</p>
+              <a class="item-link" href="#pis" data-go="pis">Obrir el pis →</a>
+            </article>
+            <article class="item-card">
+              <p class="item-title">🚗 El garatge</p>
+              <p class="item-detail">Places, vehicles, accés i roba guardada.</p>
+              <a class="item-link" href="#garatge" data-go="garatge">Obrir el garatge →</a>
+            </article>
+            <article class="item-card">
+              <p class="item-title">⚡ Serveis contractats</p>
+              <p class="item-detail">Proveïdors, números de client i dades de contacte dels serveis.</p>
+              <a class="item-link" href="#serveis" data-go="serveis">Consultar serveis →</a>
+            </article>
+            <article class="item-card">
+              <p class="item-title">📐 Plànols</p>
+              <p class="item-detail">Enllaços als plànols i documents tècnics de casa.</p>
+              <a class="item-link" href="#planols" data-go="planols">Veure plànols →</a>
+            </article>
+            <article class="item-card">
+              <p class="item-title">📄 Documents importants</p>
+              <p class="item-detail">Hipoteca, escriptures i altres documents importants de la llar.</p>
+              <a class="item-link" href="#documents" data-go="documents">Veure documents →</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="section-pis" data-category="pis"></section>
+        <section class="section" id="section-garatge" data-category="garatge"></section>
+        <section class="section" id="section-serveis" data-category="serveis"></section>
+        <section class="section" id="section-planols" data-category="planols"></section>
+        <section class="section" id="section-documents" data-category="documents"></section>
+      </div>
+    </main>
+  </div>
+
+  <section class="auth-panel" id="login-panel" aria-labelledby="login-title">
+    <h1 id="login-title">Inicia la sessió</h1>
+    <p>Entra amb el compte familiar autoritzat per consultar les dades de casa.</p>
+    <form id="login-form">
+      <div class="field">
+        <label for="login-email">Correu electrònic</label>
+        <input id="login-email" name="email" type="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="login-password">Contrasenya</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="add-button" type="submit" id="login-submit">Iniciar sessió</button>
+      <p class="auth-error" id="login-error" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <dialog id="item-dialog" aria-labelledby="dialog-title">
+    <form class="dialog-content" id="item-form">
+      <div class="dialog-header">
+        <div><p class="eyebrow" id="dialog-category">Casa</p><h2 id="dialog-title">Afegir informació</h2></div>
+        <button class="close-button" type="button" aria-label="Tancar" id="close-dialog">×</button>
+      </div>
+      <div class="field">
+        <label for="item-name">Nom</label>
+        <input id="item-name" name="name" maxlength="80" required placeholder="Per exemple, Assegurança de la llar">
+      </div>
+      <div class="field">
+        <label for="item-detail">Detalls</label>
+        <textarea id="item-detail" name="detail" maxlength="500" placeholder="Adreça, número de client, contacte, notes…"></textarea>
+      </div>
+      <div class="field" id="garage-type-field" hidden>
+        <label for="garage-type">Apartat del garatge</label>
+        <select id="garage-type" name="garageType">
+          <option value="residus">Residus per tirar</option>
+          <option value="altres">Altres</option>
+        </select>
+      </div>
+      <div class="field" id="clothing-owner-field" hidden>
+        <label for="clothing-owner">Etiqueta de propietari</label>
+        <select id="clothing-owner" name="owner">
+          <option value="" selected disabled>Tria de qui és la roba</option>
+          <option value="Ernest">Ernest</option>
+          <option value="Queralt">Queralt</option>
+          <option value="Dani">Dani</option>
+          <option value="Estel">Estel</option>
+        </select>
+      </div>
+      <div class="field" id="expiry-field" hidden>
+        <label for="item-expiry">Data de caducitat</label>
+        <input id="item-expiry" name="expiry" type="date">
+      </div>
+      <div class="field" id="link-field" hidden>
+        <label for="item-link">Enllaç al document</label>
+        <input id="item-link" name="link" type="url" placeholder="https://…">
+      </div>
+      <div class="field" id="pdf-field" hidden>
+        <label for="item-pdf">Adjunta un PDF</label>
+        <input id="item-pdf" name="pdf" type="file" accept="application/pdf,.pdf">
+        <p class="section-subtitle" id="pdf-status">Els PDFs s'emmagatzemen de manera privada al servidor.</p>
+      </div>
+      <div class="dialog-actions">
+        <button class="secondary-button" type="button" id="cancel-dialog">Cancel·lar</button>
+        <button class="add-button" type="submit">Desar</button>
+      </div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    window.OURHOUSE_SUPABASE_CONFIG = {
+      url: "https://ervlgxziksargjncwogu.supabase.co",
+      anonKey: "sb_publishable_RmLqHIC7mZ_YnVJyxFHQxg_4ziCyTgl"
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (async () => {
+      const STORAGE_KEY = "ourhouse-items-v1";
+      const DATA_ROW_ID = "home";
+      const { url, anonKey } = window.OURHOUSE_SUPABASE_CONFIG;
+      const supabase = url && anonKey && window.supabase
+        ? window.supabase.createClient(url, anonKey, {
+          auth: { storage: window.sessionStorage, persistSession: true, autoRefreshToken: true }
+        })
+        : null;
+      const garageTypes = {
+        residus: "Residus per tirar",
+        altres: "Altres"
+      };
+      const ownerTagClasses = {
+        Ernest: "owner-ernest",
+        Queralt: "owner-queralt",
+        Dani: "owner-dani",
+        Estel: "owner-estel"
+      };
+      const categories = {
+        pis: { title: "El pis", subtitle: "Dades, manteniment i informació important de l'habitatge.", icon: "⌂", singular: "element" },
+        garatge: { title: "El garatge", subtitle: "Informació útil de la plaça, els vehicles, l'accés, la roba, les eines i els productes.", icon: "▤", singular: "element" },
+        serveis: { title: "Serveis contractats", subtitle: "Proveïdors, dades de client i informació de contacte.", icon: "◉", singular: "servei" },
+        planols: { title: "Plànols", subtitle: "Plànols i documents tècnics de casa en un sol lloc.", icon: "▧", singular: "plànol" },
+        documents: { title: "Documents importants", subtitle: "Hipoteca, escriptures i altres documents importants de la llar.", icon: "▣", singular: "document" }
+      };
+      const starterItems = {
+        pis: [
+          { id: "pis-1", name: "Dades de l'habitatge", detail: "Afegeix aquí l'adreça, la superfície o altres dades útils." },
+          { id: "pis-2", name: "Manteniment i garanties", detail: "Anota revisions pendents, garanties i dates importants." }
+        ],
+        garatge: [
+          { id: "garatge-1", name: "Plaça i accés", detail: "Afegeix el número de plaça i on trobar el comandament." }
+        ],
+        serveis: [
+          { id: "serveis-1", name: "Llum, aigua i internet", detail: "Afegeix les companyies, els números de client i telèfons d'incidències." }
+        ],
+        planols: [
+          { id: "planols-1", name: "Plànol de l'habitatge", detail: "Desa un enllaç al plànol digital o indica on tens el document.", link: "" }
+        ],
+        documents: []
+      };
+      let items;
+      let clothingItems = [];
+      let toolItems = [];
+      let productItems = [];
+      let currentCategory = "pis";
+      let garageFilter = "tots";
+      let clothingFilter = "tots";
+      let clothingListVisible = true;
+      let toolListVisible = true;
+      let productListVisible = true;
+      let editingId = null;
+      let toastTimer;
+      const dialog = document.getElementById("item-dialog");
+      const form = document.getElementById("item-form");
+      const nameInput = document.getElementById("item-name");
+      const detailInput = document.getElementById("item-detail");
+      const linkInput = document.getElementById("item-link");
+      const linkField = document.getElementById("link-field");
+      const pdfInput = document.getElementById("item-pdf");
+      const pdfField = document.getElementById("pdf-field");
+      const pdfStatus = document.getElementById("pdf-status");
+      const garageTypeField = document.getElementById("garage-type-field");
+      const garageTypeInput = document.getElementById("garage-type");
+      const clothingOwnerField = document.getElementById("clothing-owner-field");
+      const clothingOwnerInput = document.getElementById("clothing-owner");
+      const expiryField = document.getElementById("expiry-field");
+      const expiryInput = document.getElementById("item-expiry");
+      const layout = document.querySelector(".layout");
+      const loginPanel = document.getElementById("login-panel");
+      const loginForm = document.getElementById("login-form");
+      const loginError = document.getElementById("login-error");
+      const loginSubmit = document.getElementById("login-submit");
+      let dataVersion = null;
+
+      function normalizeItems(value) {
+        if (!value || typeof value !== "object" || Array.isArray(value)) {
+          throw new Error("Les dades desades al servidor no tenen un format vàlid.");
+        }
+        const normalized = structuredClone(value);
+        for (const key of Object.keys(categories)) {
+          if (!Array.isArray(normalized[key])) normalized[key] = [];
+        }
+        return normalized;
+      }
+
+      function mergeItems(serverItems, legacyItems) {
+        const merged = structuredClone(serverItems);
+        for (const key of Object.keys(categories)) {
+          const byId = new Map(merged[key].map(item => [item.id, item]));
+          legacyItems[key].forEach(item => byId.set(item.id, item));
+          merged[key] = [...byId.values()];
+        }
+        return merged;
+      }
+
+      async function getStoredData() {
+        const { data, error } = await supabase
+          .from("household_data")
+          .select("items, updated_at")
+          .eq("id", DATA_ROW_ID)
+          .maybeSingle();
+        if (error) throw error;
+        return data;
+      }
+
+      async function loadItems() {
+        let legacyItems = null;
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) legacyItems = normalizeItems(JSON.parse(saved));
+        const legacyClothing = legacyItems?.garatge.filter(item => item.garageType === "roba") ?? [];
+        const legacyTools = legacyItems?.garatge.filter(item => item.garageType === "eines") ?? [];
+        const legacyProducts = legacyItems?.garatge.filter(item => item.garageType === "drogueria") ?? [];
+        if (legacyItems) legacyItems.garatge = legacyItems.garatge.filter(item => !["roba", "eines", "drogueria"].includes(item.garageType));
+
+        let row = await getStoredData();
+        let legacyImported = false;
+        if (!row) {
+          const firstItems = legacyItems || structuredClone(starterItems);
+          const { data, error } = await supabase
+            .from("household_data")
+            .insert({ id: DATA_ROW_ID, items: firstItems })
+            .select("items, updated_at")
+            .single();
+          if (!error) {
+            row = data;
+            legacyImported = Boolean(legacyItems);
+          } else if (error.code === "23505") {
+            row = await getStoredData();
+            if (!row) throw error;
+          } else {
+            throw error;
+          }
+        }
+        items = normalizeItems(row.items);
+        dataVersion = row.updated_at;
+        await loadClothingItems(legacyClothing);
+        await loadToolItems(legacyTools);
+        await loadProductItems(legacyProducts);
+        if (legacyItems) {
+          if (legacyImported || JSON.stringify(legacyItems) === JSON.stringify(items)) {
+            localStorage.removeItem(STORAGE_KEY);
+          } else {
+            const serverItems = structuredClone(items);
+            items = mergeItems(serverItems, legacyItems);
+            if (await saveItems(serverItems)) {
+              localStorage.removeItem(STORAGE_KEY);
+            } else {
+              showToast("Les dades antigues no s'han pogut combinar; encara són en aquest navegador.");
+            }
+          }
+        }
+      }
+
+      async function loadClothingItems(legacyItems = []) {
+        if (legacyItems.length) {
+          const validOwners = ["Ernest", "Queralt", "Dani", "Estel"];
+          const legacyRows = legacyItems.filter(item => item.id && (item.name || item.detail)).map(item => ({
+            id: item.id,
+            description: [item.name, item.detail].filter(Boolean).join("\n\n") || "Sense descripció",
+            owner: validOwners.includes(item.owner) ? item.owner : null
+          }));
+          if (legacyRows.length) {
+            const { error } = await supabase.from("clothing_items").upsert(legacyRows);
+            if (error) throw error;
+          }
+        }
+        const { data, error } = await supabase
+          .from("clothing_items")
+          .select("id, description, owner");
+        if (error) throw error;
+        clothingItems = data;
+      }
+
+      async function loadToolItems(legacyItems = []) {
+        const legacyRows = legacyItems.filter(item => item.id && (item.name || item.detail)).map(item => ({
+          id: item.id,
+          description: [item.name, item.detail].filter(Boolean).join("\n\n") || "Sense descripció"
+        }));
+        if (legacyRows.length) {
+          const { error } = await supabase.from("garage_tools").upsert(legacyRows);
+          if (error) throw error;
+        }
+        const { data, error } = await supabase
+          .from("garage_tools")
+          .select("id, description");
+        if (error) throw error;
+        toolItems = data;
+      }
+
+      async function loadProductItems(legacyItems = []) {
+        const legacyRows = legacyItems.filter(item => item.id && (item.name || item.detail)).map(item => ({
+          id: item.id,
+          description: [item.name, item.detail].filter(Boolean).join("\n\n") || "Sense descripció",
+          expiry: item.expiry || null
+        }));
+        if (legacyRows.length) {
+          const { error } = await supabase.from("garage_products").upsert(legacyRows);
+          if (error) throw error;
+        }
+        const { data, error } = await supabase
+          .from("garage_products")
+          .select("id, description, expiry");
+        if (error) throw error;
+        productItems = data;
+      }
+
+      async function saveItems(previousItems) {
+        try {
+          const nextVersion = new Date(Math.max(Date.now(), Date.parse(dataVersion) + 1)).toISOString();
+          const { data, error } = await supabase
+            .from("household_data")
+            .update({ items, updated_at: nextVersion })
+            .eq("id", DATA_ROW_ID)
+            .eq("updated_at", dataVersion)
+            .select("updated_at")
+            .maybeSingle();
+          if (!error && data) {
+            dataVersion = data.updated_at;
+            return true;
+          }
+          if (error) console.error("No s'han pogut desar les dades al servidor.", error);
+          items = previousItems;
+          showToast(error
+            ? "No s'han pogut desar les dades al servidor. Comprova la connexió i els permisos."
+            : "Una altra persona ha modificat les dades. Torna a carregar la pàgina abans de desar.");
+          return false;
+        } catch (error) {
+          console.error("No s'han pogut desar les dades al servidor.", error);
+          items = previousItems;
+          showToast("No s'han pogut desar les dades al servidor. Comprova la connexió.");
+          return false;
+        }
+      }
+
+      function showLogin(message = "") {
+        layout.hidden = true;
+        loginPanel.hidden = false;
+        loginError.textContent = message;
+      }
+
+      async function startApp(user) {
+        document.querySelector(".profile span:last-child").textContent = user.email || "La meva llar";
+        loginPanel.hidden = true;
+        layout.hidden = false;
+        try {
+          await loadItems();
+          render();
+        } catch (error) {
+          console.error("No s'han pogut carregar les dades del servidor.", error);
+          showLogin("No s'han pogut carregar les dades. Comprova la configuració, la connexió i els permisos de la base de dades.");
+        }
+      }
+
+      loginForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!supabase) {
+          loginError.textContent = "Falta configurar la URL i la clau pública de Supabase a index.html.";
+          return;
+        }
+        loginSubmit.disabled = true;
+        loginError.textContent = "";
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: document.getElementById("login-email").value.trim(),
+            password: document.getElementById("login-password").value
+          });
+          if (error) {
+            console.error("Supabase authentication failed.", {
+              message: error.message,
+              status: error.status,
+              code: error.code
+            });
+            loginError.textContent = "No s'ha pogut iniciar la sessió. Comprova el correu, la contrasenya i que el compte estigui autoritzat.";
+            return;
+          }
+          await startApp(data.user);
+        } catch (error) {
+          console.error("No s'ha pogut iniciar la sessió.", error);
+          loginError.textContent = "No s'ha pogut connectar amb el servidor d'autenticació.";
+        } finally {
+          loginSubmit.disabled = false;
+        }
+      });
+
+      document.getElementById("sign-out").addEventListener("click", async () => {
+        try {
+          const { error } = await supabase.auth.signOut();
+          if (error) throw error;
+          showLogin();
+        } catch (error) {
+          console.error("No s'ha pogut tancar la sessió.", error);
+          showToast("No s'ha pogut tancar la sessió.");
+        }
+      });
+
+      function readPdfData(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            const dataUrl = reader.result;
+            const separator = dataUrl.indexOf(",");
+            if (separator < 0 || !dataUrl.slice(separator + 1)) {
+              reject(new Error("El fitxer PDF és buit o invàlid."));
+              return;
+            }
+            const pdfData = dataUrl.slice(separator + 1);
+            if (!atob(pdfData.slice(0, 8)).startsWith("%PDF-")) {
+              reject(new Error("El fitxer seleccionat no és un PDF vàlid."));
+              return;
+            }
+            resolve(pdfData);
+          });
+          reader.addEventListener("error", () => reject(reader.error || new Error("No s'ha pogut llegir el fitxer.")));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      document.getElementById("download-json").addEventListener("click", async () => {
+        try {
+          const exportItems = structuredClone(items);
+          exportItems.roba = structuredClone(clothingItems);
+          exportItems.eines = structuredClone(toolItems);
+          for (const category of ["planols", "documents"]) {
+            const filesToExport = exportItems[category].filter(item => item.pdfPath && !item.pdfData);
+            for (const item of filesToExport) {
+              const { data, error } = await supabase.storage.from("ourhouse-pdfs").download(item.pdfPath);
+              if (error) throw error;
+              item.pdfData = await readPdfData(data);
+            }
+            if (exportItems[category].some(item => item.pdfName && !item.pdfPath && !item.pdfData)) {
+              throw new Error("Hi ha PDFs antics que encara no s'han pujat al servidor.");
+            }
+          }
+          const file = new Blob([JSON.stringify(exportItems, null, 2)], { type: "application/json;charset=utf-8" });
+          const url = URL.createObjectURL(file);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `ourhouse-dades-${new Date().toISOString().slice(0, 10)}.json`;
+          document.body.append(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          showToast("Dades descarregades en format JSON.");
+        } catch (error) {
+          console.error("No s'han pogut preparar les dades per exportar.", error);
+          showToast("No s'han pogut preparar els PDFs per exportar. Torna a adjuntar els PDFs antics o comprova la connexió.");
+        }
+      });
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[character]);
+      }
+
+      function isSafeLink(value) {
+        try {
+          const protocol = new URL(value).protocol;
+          return protocol === "http:" || protocol === "https:";
+        } catch {
+          return false;
+        }
+      }
+
+      function render() {
+        for (const [key, category] of Object.entries(categories)) {
+          const section = document.getElementById(`section-${key}`);
+          const addLabel = key === "serveis" ? "Afegir servei" : key === "planols" ? "Afegir plànol" : key === "documents" ? "Afegir document" : "Afegir informació";
+          const visibleItems = key === "garatge" && garageFilter !== "tots"
+            ? items[key].filter(item => item.garageType === garageFilter)
+            : items[key];
+          const cards = visibleItems.map(item => `
+            <article class="item-card">
+              <div class="card-actions">
+                <button class="icon-button" type="button" aria-label="Editar ${escapeHtml(item.name)}" data-action="edit" data-category="${key}" data-id="${escapeHtml(item.id)}">✎</button>
+                <button class="icon-button delete" type="button" aria-label="Eliminar ${escapeHtml(item.name)}" data-action="delete" data-category="${key}" data-id="${escapeHtml(item.id)}">×</button>
+              </div>
+              <p class="item-title">${escapeHtml(item.name)}</p>
+              <p class="item-detail">${escapeHtml(item.detail || "Sense detalls.")}</p>
+              ${key === "garatge" && item.garageType ? `<span class="item-extra">${escapeHtml(garageTypes[item.garageType] || garageTypes.altres)}</span>` : ""}
+              ${key === "serveis" ? '<span class="item-extra">Contractat</span>' : ""}
+              ${key === "pis" && item.name.toLowerCase().includes("garantia") ? '<span class="item-extra warning">Revisa les dates</span>' : ""}
+              ${key === "planols" && item.link && isSafeLink(item.link) ? `<a class="item-link" href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer">Obrir document ↗</a>` : ""}
+              ${(key === "planols" || key === "documents") && (item.pdfData || item.pdfPath || item.pdfName) ? `<button class="item-link" type="button" data-action="download-pdf" data-category="${key}" data-id="${escapeHtml(item.id)}">Descarregar PDF: ${escapeHtml(item.pdfName || "document.pdf")} ↓</button>` : ""}
+            </article>`).join("");
+          section.innerHTML = `
+            <div class="section-heading">
+              <div><h2>${category.icon} ${category.title}</h2><p class="section-subtitle">${category.subtitle}</p></div>
+              <button class="add-button" type="button" data-action="add" data-category="${key}"><span aria-hidden="true">＋</span> ${addLabel}</button>
+            </div>
+            ${key === "garatge" ? renderGarageFilters() : ""}
+            <div class="item-grid">${cards || `<div class="empty-state">Encara no hi ha cap ${category.singular}. Afegeix-ne un per tenir-lo a mà.</div>`}</div>
+            ${key === "garatge" ? renderClothingSection() + renderToolSection() + renderProductSection() : ""}`;
+        }
+      }
+
+      function renderClothingSection() {
+        const owners = ["Ernest", "Queralt", "Dani", "Estel"];
+        const visibleItems = clothingFilter === "tots"
+          ? clothingItems
+          : clothingItems.filter(item => item.owner === clothingFilter);
+        const rows = visibleItems.map(item => `
+          <tr>
+            <td class="garage-list-row-icon" aria-hidden="true">👕</td>
+            <td class="garage-list-description" title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</td>
+            <td><span class="item-extra owner-tag ${ownerTagClasses[item.owner] || ""}">${escapeHtml(item.owner || "Sense etiqueta")}</span></td>
+            <td><div class="garage-list-actions">
+              <button class="icon-button" type="button" aria-label="Editar roba" data-action="garage-list-edit" data-list="roba" data-id="${escapeHtml(item.id)}">✎</button>
+              <button class="icon-button delete" type="button" aria-label="Eliminar roba" data-action="garage-list-delete" data-list="roba" data-id="${escapeHtml(item.id)}">×</button>
+            </div></td>
+          </tr>`).join("");
+        return `
+          <div class="garage-list-section">
+            <div class="section-heading garage-list-heading">
+              <div><h3>Roba guardada</h3><p class="section-subtitle">Llista de peces de roba i de qui són.</p></div>
+              <div class="garage-list-controls">
+                <button class="secondary-button" type="button" data-action="garage-list-toggle" data-list="roba"
+                  aria-expanded="${clothingListVisible}" aria-controls="clothing-list-content">${clothingListVisible ? "Amaga la llista" : "Mostra la llista"}</button>
+                <button class="add-button" type="button" data-action="garage-list-add" data-list="roba"><span aria-hidden="true">＋</span> Afegir roba</button>
+              </div>
+            </div>
+            <div id="clothing-list-content"${clothingListVisible ? "" : " hidden"}>
+              <div class="garage-filters" aria-label="Filtrar roba per persona">
+                ${[["tots", "Tothom"], ...owners.map(owner => [owner, owner])].map(([key, label]) => `
+                  <button class="garage-filter${clothingFilter === key ? " active" : ""}" type="button"
+                    data-action="clothing-filter" data-filter="${key}" aria-pressed="${clothingFilter === key}">${label}</button>`).join("")}
+              </div>
+              ${rows ? `<table class="garage-list-table clothing-table" aria-label="Roba guardada">
+                <thead><tr><th scope="col" aria-label="Peça"></th><th scope="col">Descripció</th><th scope="col">De qui</th><th scope="col">Accions</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>` : `<div class="empty-state">Encara no hi ha roba guardada. Afegeix la primera peça.</div>`}
+            </div>
+          </div>`;
+      }
+
+      function renderToolSection() {
+        const rows = toolItems.map(item => `
+          <tr>
+            <td class="garage-list-row-icon" aria-hidden="true">🔧</td>
+            <td class="garage-list-description" title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</td>
+            <td><div class="garage-list-actions">
+              <button class="icon-button" type="button" aria-label="Editar eina" data-action="garage-list-edit" data-list="eines" data-id="${escapeHtml(item.id)}">✎</button>
+              <button class="icon-button delete" type="button" aria-label="Eliminar eina" data-action="garage-list-delete" data-list="eines" data-id="${escapeHtml(item.id)}">×</button>
+            </div></td>
+          </tr>`).join("");
+        return `
+          <div class="garage-list-section">
+            <div class="section-heading garage-list-heading">
+              <div><h3>Eines guardades</h3><p class="section-subtitle">Llista d'eines del garatge.</p></div>
+              <div class="garage-list-controls">
+                <button class="secondary-button" type="button" data-action="garage-list-toggle" data-list="eines"
+                  aria-expanded="${toolListVisible}" aria-controls="tools-list-content">${toolListVisible ? "Amaga la llista" : "Mostra la llista"}</button>
+                <button class="add-button" type="button" data-action="garage-list-add" data-list="eines"><span aria-hidden="true">＋</span> Afegir eina</button>
+              </div>
+            </div>
+            <div id="tools-list-content"${toolListVisible ? "" : " hidden"}>
+              ${rows ? `<table class="garage-list-table tools-table" aria-label="Eines guardades">
+                <thead><tr><th scope="col" aria-label="Eina"></th><th scope="col">Descripció</th><th scope="col">Accions</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>` : `<div class="empty-state">Encara no hi ha eines guardades. Afegeix-ne la primera.</div>`}
+            </div>
+          </div>`;
+      }
+
+      function renderProductSection() {
+        const rows = productItems.map(item => `
+          <tr>
+            <td class="garage-list-row-icon" aria-hidden="true">🧴</td>
+            <td class="garage-list-description" title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</td>
+            <td>${item.expiry ? renderExpiry(item.expiry) : "—"}</td>
+            <td><div class="garage-list-actions">
+              <button class="icon-button" type="button" aria-label="Editar producte" data-action="garage-list-edit" data-list="productes" data-id="${escapeHtml(item.id)}">✎</button>
+              <button class="icon-button delete" type="button" aria-label="Eliminar producte" data-action="garage-list-delete" data-list="productes" data-id="${escapeHtml(item.id)}">×</button>
+            </div></td>
+          </tr>`).join("");
+        return `
+          <div class="garage-list-section">
+            <div class="section-heading garage-list-heading">
+              <div><h3>Productes</h3><p class="section-subtitle">Pintures, dissolvents, esprais i altres productes del garatge.</p></div>
+              <div class="garage-list-controls">
+                <button class="secondary-button" type="button" data-action="garage-list-toggle" data-list="productes"
+                  aria-expanded="${productListVisible}" aria-controls="products-list-content">${productListVisible ? "Amaga la llista" : "Mostra la llista"}</button>
+                <button class="add-button" type="button" data-action="garage-list-add" data-list="productes"><span aria-hidden="true">＋</span> Afegir producte</button>
+              </div>
+            </div>
+            <div id="products-list-content"${productListVisible ? "" : " hidden"}>
+              ${rows ? `<table class="garage-list-table products-table" aria-label="Productes del garatge">
+                <thead><tr><th scope="col" aria-label="Producte"></th><th scope="col">Descripció</th><th scope="col">Caducitat</th><th scope="col">Accions</th></tr></thead>
+                <tbody>${rows}</tbody>
+              </table>` : `<div class="empty-state">Encara no hi ha productes guardats. Afegeix-ne el primer.</div>`}
+            </div>
+          </div>`;
+      }
+
+      function renderGarageFilters() {
+        const filters = {
+          tots: "Tot",
+          residus: "Residus",
+          altres: "Altres"
+        };
+        return `<div class="garage-filters" aria-label="Filtrar contingut del garatge">
+          ${Object.entries(filters).map(([key, label]) => `
+            <button class="garage-filter${garageFilter === key ? " active" : ""}" type="button"
+              data-action="garage-filter" data-filter="${key}" aria-pressed="${garageFilter === key}">${label}</button>`).join("")}
+        </div>`;
+      }
+
+      function renderExpiry(value) {
+        const expiryDate = new Date(`${value}T00:00:00`);
+        if (Number.isNaN(expiryDate.getTime())) return "";
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const daysLeft = Math.ceil((expiryDate - today) / 86400000);
+        const status = daysLeft < 0 ? "Caducat" : daysLeft <= 30 ? "Caduca aviat" : "En termini";
+        const className = daysLeft <= 30 ? "item-extra warning" : "item-extra";
+        return `<span class="${className}">${status} · ${expiryDate.toLocaleDateString("ca-ES")}</span>`;
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+      }
+
+      function navigate(key) {
+        const validKey = key === "resum" || Object.hasOwn(categories, key) ? key : "resum";
+        document.querySelectorAll(".section").forEach(section => {
+          section.classList.toggle("active", section.id === `section-${validKey}`);
+        });
+        document.querySelectorAll(".nav button").forEach(button => {
+          const active = button.dataset.section === validKey;
+          button.classList.toggle("active", active);
+          if (active) button.setAttribute("aria-current", "page");
+          else button.removeAttribute("aria-current");
+        });
+        if (validKey !== "resum") document.querySelector(`#section-${validKey} h2`).setAttribute("tabindex", "-1");
+      }
+
+      function openForm(category, item = null) {
+        currentCategory = category;
+        editingId = item?.id ?? null;
+        nameInput.closest(".field").hidden = false;
+        nameInput.required = true;
+        detailInput.required = false;
+        detailInput.labels[0].textContent = "Detalls";
+        detailInput.placeholder = "Adreça, número de client, contacte, notes…";
+        document.getElementById("dialog-category").textContent = categories[category].title;
+        document.getElementById("dialog-title").textContent = item ? "Editar informació" : "Afegir informació";
+        nameInput.value = item?.name ?? "";
+        detailInput.value = item?.detail ?? "";
+        linkInput.value = item?.link ?? "";
+        pdfInput.value = "";
+        pdfStatus.textContent = item?.pdfName
+          ? `PDF adjunt: ${item.pdfName}. Si n'adjuntes un altre, se substituirà.`
+          : "Els PDFs s'emmagatzemen de manera privada al servidor.";
+        garageTypeInput.value = item ? item.garageType ?? "altres" : (garageFilter !== "tots" ? garageFilter : "altres");
+        clothingOwnerInput.value = item?.owner ?? "";
+        expiryInput.value = item?.expiry ?? "";
+        garageTypeField.hidden = category !== "garatge";
+        updateGarageFields();
+        linkField.hidden = category !== "planols";
+        const hasPdfAttachments = category === "planols" || category === "documents";
+        pdfField.hidden = !hasPdfAttachments;
+        dialog.showModal();
+        nameInput.focus();
+      }
+
+      function openGarageListForm(listType, item = null) {
+        const isClothing = listType === "roba";
+        const isProduct = listType === "productes";
+        const label = isClothing ? "roba" : isProduct ? "producte" : "eina";
+        currentCategory = listType;
+        editingId = item?.id ?? null;
+        document.getElementById("dialog-category").textContent = isClothing ? "Roba guardada" : isProduct ? "Productes" : "Eines guardades";
+        document.getElementById("dialog-title").textContent = item ? `Editar ${label}` : `Afegir ${label}`;
+        nameInput.value = "";
+        nameInput.required = false;
+        nameInput.closest(".field").hidden = true;
+        detailInput.labels[0].textContent = "Descripció";
+        detailInput.placeholder = isClothing ? "Descriu la peça de roba…" : isProduct ? "Descriu el producte…" : "Descriu l'eina…";
+        detailInput.required = true;
+        detailInput.value = item?.description ?? "";
+        clothingOwnerInput.value = item?.owner ?? "";
+        clothingOwnerField.hidden = !isClothing;
+        clothingOwnerInput.required = isClothing;
+        garageTypeField.hidden = true;
+        expiryField.hidden = !isProduct;
+        expiryInput.value = item?.expiry ?? "";
+        linkField.hidden = true;
+        pdfField.hidden = true;
+        linkInput.value = "";
+        pdfInput.value = "";
+        dialog.showModal();
+        detailInput.focus();
+      }
+
+      garageTypeInput.addEventListener("change", () => {
+        updateGarageFields();
+      });
+
+      function updateGarageFields() {
+        clothingOwnerField.hidden = true;
+        clothingOwnerInput.required = false;
+        expiryField.hidden = true;
+        if (expiryField.hidden) expiryInput.value = "";
+      }
+
+      document.querySelector(".nav").addEventListener("click", event => {
+        const button = event.target.closest("[data-section]");
+        if (button) navigate(button.dataset.section);
+      });
+
+      document.querySelector(".content").addEventListener("click", async event => {
+        const goLink = event.target.closest("[data-go]");
+        if (goLink) {
+          event.preventDefault();
+          navigate(goLink.dataset.go);
+          return;
+        }
+        const actionButton = event.target.closest("[data-action]");
+        if (!actionButton) return;
+        const { action, category, id } = actionButton.dataset;
+        if (action === "garage-filter") {
+          garageFilter = actionButton.dataset.filter;
+          render();
+          return;
+        }
+        if (action === "clothing-filter") {
+          clothingFilter = actionButton.dataset.filter;
+          render();
+          return;
+        }
+        if (action === "garage-list-toggle") {
+          if (actionButton.dataset.list === "roba") clothingListVisible = !clothingListVisible;
+          else if (actionButton.dataset.list === "eines") toolListVisible = !toolListVisible;
+          else productListVisible = !productListVisible;
+          render();
+          return;
+        }
+        if (action === "garage-list-add") {
+          openGarageListForm(actionButton.dataset.list);
+          return;
+        }
+        if (action === "garage-list-edit") {
+          const listType = actionButton.dataset.list;
+          const list = listType === "roba" ? clothingItems : listType === "eines" ? toolItems : productItems;
+          const item = list.find(entry => entry.id === id);
+          if (item) openGarageListForm(listType, item);
+          return;
+        }
+        if (action === "garage-list-delete") {
+          const listType = actionButton.dataset.list;
+          const isClothing = listType === "roba";
+          const isProduct = listType === "productes";
+          const list = isClothing ? clothingItems : isProduct ? productItems : toolItems;
+          const label = isClothing ? "peça de roba" : isProduct ? "producte" : "eina";
+          const table = isClothing ? "clothing_items" : isProduct ? "garage_products" : "garage_tools";
+          if (!list.some(entry => entry.id === id) || !window.confirm(`Vols eliminar ${isClothing ? "aquesta peça de roba" : `aquest ${label}`}?`)) return;
+          try {
+            const { error } = await supabase.from(table).delete().eq("id", id);
+            if (error) throw error;
+            if (isClothing) clothingItems = clothingItems.filter(entry => entry.id !== id);
+            else if (isProduct) productItems = productItems.filter(entry => entry.id !== id);
+            else toolItems = toolItems.filter(entry => entry.id !== id);
+            render();
+            showToast(isClothing ? "Peça eliminada." : isProduct ? "Producte eliminat." : "Eina eliminada.");
+          } catch (error) {
+            console.error("No s'ha pogut eliminar l'element del garatge.", error);
+            showToast("No s'ha pogut eliminar l'element. Comprova la connexió i els permisos.");
+          }
+          return;
+        }
+        if (action === "add") {
+          openForm(category);
+          return;
+        }
+        const item = items[category].find(entry => entry.id === id);
+        if (!item) return;
+        if (action === "edit") openForm(category, item);
+        if (action === "download-pdf") {
+          try {
+            let file;
+            if (item.pdfPath) {
+              const { data, error } = await supabase.storage.from("ourhouse-pdfs").download(item.pdfPath);
+              if (error) throw error;
+              file = data;
+            } else if (item.pdfData) {
+              file = new Blob([Uint8Array.from(atob(item.pdfData), character => character.charCodeAt(0))], { type: "application/pdf" });
+            } else {
+              throw new Error("Aquest PDF antic només existeix a la carpeta local. Torna'l a adjuntar per pujar-lo al servidor.");
+            }
+            const url = URL.createObjectURL(file);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = item.pdfName || "planol.pdf";
+            document.body.append(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+          } catch (error) {
+            console.error("No s'ha pogut descarregar el PDF.", error);
+            showToast(String(error?.message || "").includes("antic")
+              ? "Aquest PDF antic només existeix a la carpeta local. Torna'l a adjuntar per pujar-lo al servidor."
+              : "No s'ha pogut descarregar el PDF del servidor.");
+          }
+        }
+        if (action === "delete" && window.confirm(`Vols eliminar «${item.name}»?`)) {
+          const previousItems = structuredClone(items);
+          items[category] = items[category].filter(entry => entry.id !== id);
+          if (await saveItems(previousItems)) {
+            if (item.pdfPath) {
+              try {
+                const { error } = await supabase.storage.from("ourhouse-pdfs").remove([item.pdfPath]);
+                if (error) throw error;
+                showToast("Informació eliminada.");
+              } catch (error) {
+                console.error("No s'ha pogut eliminar el PDF del servidor.", error);
+                showToast("Informació eliminada, però no s'ha pogut eliminar el PDF del servidor.");
+              }
+            } else {
+              showToast("Informació eliminada.");
+            }
+          }
+          render();
+        }
+      });
+
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        const isClothing = currentCategory === "roba";
+        const isProduct = currentCategory === "productes";
+        const isGarageList = isClothing || isProduct || currentCategory === "eines";
+        const name = nameInput.value.trim();
+        const description = detailInput.value.trim();
+        if (isGarageList ? !description : !name) {
+          (isGarageList ? detailInput : nameInput).focus();
+          return;
+        }
+        const link = linkInput.value.trim();
+        linkInput.setCustomValidity(currentCategory === "planols" && link && !isSafeLink(link) ? "L'enllaç ha de començar per http:// o https://." : "");
+        if (!form.reportValidity()) return;
+        if (isGarageList) {
+          const submitButton = form.querySelector('[type="submit"]');
+          submitButton.disabled = true;
+          try {
+            const listItem = {
+              id: editingId || `${currentCategory}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+              description,
+              ...(isClothing ? { owner: clothingOwnerInput.value } : {}),
+              ...(isProduct ? { expiry: expiryInput.value || null } : {})
+            };
+            const table = isClothing ? "clothing_items" : isProduct ? "garage_products" : "garage_tools";
+            const selection = isClothing ? "id, description, owner" : isProduct ? "id, description, expiry" : "id, description";
+            const { data, error } = await supabase
+              .from(table)
+              .upsert(listItem)
+              .select(selection)
+              .single();
+            if (error) throw error;
+            const list = isClothing ? clothingItems : isProduct ? productItems : toolItems;
+            const existingIndex = list.findIndex(item => item.id === editingId);
+            if (existingIndex >= 0) list[existingIndex] = data;
+            else list.push(data);
+            if (isProduct) productItems = list;
+            render();
+            dialog.close();
+            showToast(editingId ? "Canvis desats." : isClothing ? "Peça afegida." : isProduct ? "Producte afegit." : "Eina afegida.");
+          } catch (error) {
+            console.error("No s'ha pogut desar l'element del garatge.", error);
+            showToast("No s'ha pogut desar l'element. Comprova la connexió i els permisos.");
+          } finally {
+            submitButton.disabled = false;
+          }
+          return;
+        }
+        const selectedPdf = currentCategory === "planols" || currentCategory === "documents" ? pdfInput.files[0] : null;
+        const submitButton = form.querySelector('[type="submit"]');
+        submitButton.disabled = true;
+        const existingItem = items[currentCategory].find(item => item.id === editingId);
+        let pdfData = !selectedPdf ? existingItem?.pdfData : undefined;
+        let pdfName = existingItem?.pdfName;
+        const itemId = editingId || `${currentCategory}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        let pdfPath = existingItem?.pdfPath;
+        const previousPdfPath = existingItem?.pdfPath;
+        let uploadedPdfPath = null;
+        if (selectedPdf) {
+          try {
+            const signature = await selectedPdf.slice(0, 5).text();
+            if (signature !== "%PDF-") throw new Error("El fitxer seleccionat no és un PDF vàlid.");
+            pdfPath = `${currentCategory}/${itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.pdf`;
+            const { error } = await supabase.storage.from("ourhouse-pdfs").upload(pdfPath, selectedPdf, {
+              contentType: "application/pdf"
+            });
+            if (error) throw error;
+            uploadedPdfPath = pdfPath;
+            pdfName = selectedPdf.name;
+            pdfData = undefined;
+          } catch (error) {
+            console.error("No s'ha pogut desar el PDF al servidor.", error);
+            showToast("No s'ha pogut desar el PDF al servidor. Comprova la connexió i els permisos.");
+            submitButton.disabled = false;
+            return;
+          }
+        }
+        const existingIndex = items[currentCategory].findIndex(item => item.id === editingId);
+        const item = {
+          id: itemId,
+          name,
+          detail: detailInput.value.trim(),
+          ...(currentCategory === "garatge" ? {
+            garageType: garageTypeInput.value,
+            ...(garageTypeInput.value === "roba" ? { owner: clothingOwnerInput.value } : {})
+          } : {}),
+          ...(currentCategory === "planols" ? {
+            link,
+            ...(pdfName ? { pdfName } : {}),
+            ...(pdfData ? { pdfData } : {}),
+            ...(pdfPath ? { pdfPath } : {})
+          } : {}),
+          ...(currentCategory === "documents" ? {
+            ...(pdfName ? { pdfName } : {}),
+            ...(pdfData ? { pdfData } : {}),
+            ...(pdfPath ? { pdfPath } : {})
+          } : {})
+        };
+        const previousItems = structuredClone(items);
+        if (existingIndex >= 0) items[currentCategory][existingIndex] = item;
+        else items[currentCategory].push(item);
+        if (await saveItems(previousItems)) {
+          render();
+          dialog.close();
+          if (previousPdfPath && uploadedPdfPath) {
+            try {
+              const { error } = await supabase.storage.from("ourhouse-pdfs").remove([previousPdfPath]);
+              if (error) throw error;
+            } catch (error) {
+              console.error("No s'ha pogut eliminar el PDF substituït del servidor.", error);
+              showToast("Canvis desats, però no s'ha pogut eliminar el PDF anterior.");
+              submitButton.disabled = false;
+              return;
+            }
+          }
+          showToast(editingId ? "Canvis desats." : "Informació afegida.");
+        } else {
+          if (uploadedPdfPath) {
+            try {
+              const { error } = await supabase.storage.from("ourhouse-pdfs").remove([uploadedPdfPath]);
+              if (error) throw error;
+            } catch (error) {
+              console.error("No s'ha pogut netejar el PDF després d'un error en desar les dades.", error);
+            }
+          }
+          render();
+        }
+        submitButton.disabled = false;
+      });
+
+      document.getElementById("close-dialog").addEventListener("click", () => dialog.close());
+      document.getElementById("cancel-dialog").addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", event => {
+        if (event.target === dialog) dialog.close();
+      });
+
+      if (!supabase) {
+        showLogin(url && anonKey
+          ? "No s'ha pogut carregar el client de Supabase. Comprova la connexió i recarrega la pàgina."
+          : "Configura la URL i la clau pública de Supabase a index.html per activar l'accés.");
+      } else {
+        supabase.auth.onAuthStateChange(event => {
+          if (event === "SIGNED_OUT") showLogin();
+        });
+        try {
+          const { data, error } = await supabase.auth.getSession();
+          if (error) throw error;
+          if (data.session) await startApp(data.session.user);
+          else showLogin();
+        } catch (error) {
+          console.error("No s'ha pogut recuperar la sessió.", error);
+          showLogin("No s'ha pogut comprovar la sessió. Torna a iniciar-la.");
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

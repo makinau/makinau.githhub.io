@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <title>MyUni — Organitza la teva vida universitària</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20243a;
+      --muted: #85899d;
+      --line: #eceef4;
+      --paper: #fff;
+      --canvas: #f7f8fc;
+      --purple: #7165e8;
+      --purple-dark: #5549cb;
+      --purple-soft: #f0efff;
+      --green: #28a879;
+      --amber: #e8a23a;
+      --red: #df6a75;
+      --shadow: 0 12px 35px rgb(34 37 68 / 5%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--canvas); color: var(--ink); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar {
+      position: fixed; inset: 0 auto 0 0; z-index: 3; display: flex; width: 252px;
+      flex-direction: column; padding: 27px 18px 20px; background: var(--paper);
+      border-right: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 10px; margin-bottom: 41px; }
+    .brand-mark {
+      display: grid; width: 36px; height: 36px; place-items: center; border-radius: 12px;
+      background: var(--purple); color: white; font-size: 19px; font-weight: 800;
+      box-shadow: 0 5px 12px rgb(113 101 232 / 25%);
+    }
+    .brand-name { font-size: 19px; font-weight: 750; letter-spacing: -.5px; }
+    .nav-label, .section-label {
+      padding: 0 11px; margin: 0 0 10px; color: #a0a3b2;
+      font-size: 10px; font-weight: 750; letter-spacing: 1.15px; text-transform: uppercase;
+    }
+    .nav { display: grid; gap: 5px; }
+    .nav-button, .project-link {
+      display: flex; width: 100%; align-items: center; gap: 12px; padding: 11px 12px;
+      border: 0; border-radius: 10px; background: transparent; color: #777b91;
+      text-align: left; transition: background .16s, color .16s;
+    }
+    .nav-button:hover, .project-link:hover { background: #f6f6fb; color: var(--ink); }
+    .nav-button.active { background: var(--purple-soft); color: var(--purple-dark); font-weight: 650; }
+    .nav-icon { display: grid; width: 18px; place-items: center; font-size: 17px; }
+    .nav-count { margin-left: auto; color: #a1a4b4; font-size: 12px; }
+    .projects-section { margin-top: 37px; }
+    .project-link { gap: 10px; padding: 9px 11px; font-size: 13px; }
+    .project-dot { width: 9px; height: 9px; flex: 0 0 auto; border-radius: 50%; }
+    .project-link .nav-count { font-size: 11px; }
+    .sidebar-bottom { margin-top: auto; }
+    .tip-card {
+      padding: 15px; border: 1px solid #eeedff; border-radius: 14px;
+      background: linear-gradient(140deg, #f8f7ff, #f1f0ff);
+    }
+    .tip-icon { margin-bottom: 8px; font-size: 18px; }
+    .tip-card strong { display: block; margin-bottom: 5px; font-size: 12px; }
+    .tip-card p { margin: 0; color: #85889d; font-size: 11px; line-height: 1.55; }
+    .sidebar-footer { padding: 18px 10px 0; color: #a0a3b2; font-size: 11px; }
+    main { width: calc(100% - 252px); max-width: 1440px; margin-left: 252px; padding: 32px 48px 56px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 37px; }
+    .date-line { color: var(--muted); font-size: 13px; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .icon-button {
+      display: grid; width: 39px; height: 39px; place-items: center; border: 1px solid var(--line);
+      border-radius: 12px; background: white; color: #777b91; font-size: 17px;
+    }
+    .avatar {
+      display: grid; width: 38px; height: 38px; place-items: center; border: 2px solid white;
+      border-radius: 50%; background: #f9dbba; color: #9a5d31; font-size: 13px; font-weight: 700;
+      box-shadow: 0 0 0 1px var(--line);
+    }
+    .welcome { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 25px; }
+    h1 { margin: 0 0 8px; font-size: clamp(25px, 3vw, 32px); letter-spacing: -1.15px; }
+    .welcome p { margin: 0; color: var(--muted); font-size: 14px; }
+    .button-primary, .button-secondary {
+      display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px;
+      padding: 0 16px; border: 0; border-radius: 10px; font-size: 13px; font-weight: 650;
+      transition: background .16s, transform .16s;
+    }
+    .button-primary { background: var(--purple); color: white; box-shadow: 0 5px 12px rgb(113 101 232 / 19%); }
+    .button-primary:hover { transform: translateY(-1px); background: var(--purple-dark); }
+    .button-secondary { border: 1px solid var(--line); background: white; color: #666b80; }
+    .button-secondary:hover { background: #fafaff; }
+    .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 26px; }
+    .stat-card {
+      display: flex; min-height: 105px; align-items: center; gap: 15px; padding: 20px;
+      border: 1px solid var(--line); border-radius: 15px; background: var(--paper); box-shadow: var(--shadow);
+    }
+    .stat-icon { display: grid; width: 43px; height: 43px; place-items: center; border-radius: 13px; font-size: 19px; }
+    .stat-icon.purple { background: #f0efff; }
+    .stat-icon.green { background: #e9f8f1; }
+    .stat-icon.orange { background: #fff5e8; }
+    .stat-number { margin-bottom: 3px; font-size: 23px; font-weight: 750; letter-spacing: -.7px; }
+    .stat-label { color: var(--muted); font-size: 11px; }
+    .content-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(245px, .85fr); gap: 20px; align-items: start; }
+    .panel { border: 1px solid var(--line); border-radius: 15px; background: var(--paper); box-shadow: var(--shadow); }
+    .tasks-panel { min-height: 450px; padding: 22px 22px 14px; }
+    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+    .panel-heading h2 { margin: 0; font-size: 16px; letter-spacing: -.3px; }
+    .heading-subtitle { margin-top: 5px; color: var(--muted); font-size: 11px; }
+    .search {
+      width: 145px; height: 34px; padding: 0 10px; border: 1px solid var(--line);
+      border-radius: 8px; outline: 0; background: #fff; color: var(--ink); font-size: 11px;
+    }
+    .search:focus, input:focus, select:focus { border-color: #aaa4ff; box-shadow: 0 0 0 3px rgb(113 101 232 / 10%); outline: 0; }
+    .task-list { display: grid; }
+    .task-row {
+      display: grid; grid-template-columns: 19px minmax(0, 1fr) auto; align-items: center;
+      gap: 11px; min-height: 63px; border-bottom: 1px solid #f0f1f5;
+    }
+    .task-row:last-child { border-bottom: 0; }
+    .task-check {
+      display: grid; width: 17px; height: 17px; place-items: center; padding: 0;
+      border: 1.5px solid #d5d7e2; border-radius: 50%; background: white; color: white; font-size: 10px;
+    }
+    .task-check:hover { border-color: var(--purple); }
+    .task-row.completed .task-check { border-color: var(--green); background: var(--green); }
+    .task-row.completed .task-title { color: #a4a6b3; text-decoration: line-through; }
+    .task-title { overflow: hidden; margin-bottom: 5px; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+    .task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; color: #9a9dae; font-size: 10px; }
+    .meta-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .task-trailing { display: flex; align-items: center; gap: 9px; }
+    .priority {
+      padding: 5px 8px; border-radius: 6px; background: #f7f7fa; color: #85899a;
+      font-size: 9px; font-weight: 650; white-space: nowrap;
+    }
+    .priority.alta { background: #fff0ef; color: #d66b64; }
+    .priority.mitjana { background: #fff7e9; color: #c18a32; }
+    .priority.baixa { background: #eef8f3; color: #42a27e; }
+    .delete-task {
+      display: grid; width: 25px; height: 25px; place-items: center; padding: 0; border: 0;
+      border-radius: 7px; background: transparent; color: #b7b9c5; font-size: 16px; opacity: .6;
+    }
+    .delete-task:hover { background: #fff0ef; color: var(--red); opacity: 1; }
+    .empty-state { padding: 50px 15px; color: var(--muted); font-size: 13px; text-align: center; }
+    .side-column { display: grid; gap: 18px; }
+    .progress-panel { padding: 20px; }
+    .progress-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .progress-title h2, .projects-heading h2 { margin: 0; font-size: 14px; }
+    .progress-title span { color: var(--muted); font-size: 10px; }
+    .progress-ring {
+      display: grid; width: 132px; height: 132px; place-items: center; margin: 0 auto 15px;
+      border-radius: 50%; background: conic-gradient(var(--purple) var(--progress, 0%), #f0eff8 0);
+    }
+    .progress-ring-inner { display: grid; width: 104px; height: 104px; place-content: center; border-radius: 50%; background: white; text-align: center; }
+    .progress-percent { font-size: 25px; font-weight: 750; letter-spacing: -1px; }
+    .progress-caption { margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .progress-note { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; text-align: center; }
+    .projects-panel { padding: 19px 18px 12px; }
+    .projects-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .manage-link { padding: 5px 0 5px 8px; border: 0; background: transparent; color: var(--purple); font-size: 10px; font-weight: 650; }
+    .project-card { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f0f1f5; }
+    .project-card:last-child { border: 0; }
+    .project-card-icon { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 10px; background: var(--project-soft, #f0efff); font-size: 15px; }
+    .project-card-name { overflow: hidden; margin-bottom: 3px; font-size: 11px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+    .project-card-count { color: var(--muted); font-size: 9px; }
+    .project-card-progress { width: 42px; height: 4px; overflow: hidden; margin-left: auto; border-radius: 4px; background: #f0f0f5; }
+    .project-card-progress span { display: block; height: 100%; border-radius: inherit; background: var(--project-color, var(--purple)); }
+    dialog {
+      width: min(440px, calc(100% - 32px)); max-height: min(80vh, 680px); padding: 0; overflow: auto;
+      border: 1px solid var(--line); border-radius: 17px; background: white; color: var(--ink);
+      box-shadow: 0 25px 80px rgb(24 27 52 / 22%);
+    }
+    dialog::backdrop { background: rgb(25 27 47 / 35%); backdrop-filter: blur(2px); }
+    .dialog-content { padding: 23px; }
+    .dialog-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .dialog-heading h2 { margin: 0 0 5px; font-size: 18px; }
+    .dialog-heading p { margin: 0; color: var(--muted); font-size: 11px; }
+    .close-dialog { width: 30px; height: 30px; border: 0; border-radius: 8px; background: #f5f5f9; color: #777b91; font-size: 17px; }
+    .form-field { display: grid; gap: 7px; margin-bottom: 15px; }
+    .form-field label { color: #656a7f; font-size: 11px; font-weight: 650; }
+    .form-field input, .form-field select {
+      width: 100%; height: 40px; padding: 0 11px; border: 1px solid var(--line);
+      border-radius: 9px; background: white; color: var(--ink); font-size: 12px;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 20px; }
+    .project-manage-row { display: flex; align-items: center; gap: 11px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .project-manage-row:last-child { border: 0; }
+    .project-manage-name { flex: 1; font-size: 12px; font-weight: 600; }
+    .project-manage-count { color: var(--muted); font-size: 10px; }
+    .project-action { padding: 6px 8px; border: 0; border-radius: 7px; font-size: 10px; }
+    .edit-project { background: var(--purple-soft); color: var(--purple-dark); }
+    .delete-project { background: #fff0ef; color: #ce6668; }
+    .toast {
+      position: fixed; right: 24px; bottom: 24px; z-index: 5; padding: 12px 16px;
+      border-radius: 10px; background: #292b41; color: white; font-size: 12px;
+      box-shadow: 0 8px 25px rgb(0 0 0 / 15%); opacity: 0; pointer-events: none; transform: translateY(8px);
+      transition: opacity .2s, transform .2s;
+    }
+    .toast.visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 1020px) {
+      main { padding-right: 28px; padding-left: 28px; }
+      .content-grid { grid-template-columns: minmax(0, 1.4fr) minmax(220px, .8fr); gap: 14px; }
+      .tasks-panel { padding-right: 16px; padding-left: 16px; }
+      .stats { gap: 10px; }
+      .stat-card { gap: 10px; padding: 15px; }
+    }
+    @media (max-width: 760px) {
+      .sidebar { width: 66px; align-items: center; padding: 19px 8px; }
+      .brand { margin: 0 0 32px; padding: 0; }
+      .brand-name, .nav-label, .nav-button .nav-text, .nav-count, .projects-section, .sidebar-bottom { display: none; }
+      .nav { width: 100%; }
+      .nav-button { justify-content: center; padding: 12px 0; }
+      .nav-icon { font-size: 18px; }
+      main { width: calc(100% - 66px); margin-left: 66px; padding: 24px 20px 40px; }
+      .content-grid { grid-template-columns: 1fr; }
+      .side-column { grid-template-columns: 1fr 1fr; }
+      .progress-panel, .projects-panel { min-width: 0; }
+    }
+    @media (max-width: 540px) {
+      main { padding: 19px 13px 32px; }
+      .topbar { margin-bottom: 27px; }
+      .date-line { font-size: 11px; }
+      .welcome { align-items: flex-start; flex-direction: column; margin-bottom: 20px; }
+      .welcome .button-primary { width: 100%; }
+      .stats { grid-template-columns: 1fr; gap: 8px; margin-bottom: 16px; }
+      .stat-card { min-height: 75px; }
+      .stat-icon { width: 38px; height: 38px; }
+      .stat-number { font-size: 20px; }
+      .side-column { grid-template-columns: 1fr; }
+      .tasks-panel { padding: 17px 12px 10px; }
+      .panel-heading { align-items: flex-start; flex-direction: column; }
+      .search { width: 100%; }
+      .task-row { grid-template-columns: 18px minmax(0, 1fr) auto; gap: 8px; }
+      .task-trailing { gap: 4px; }
+      .priority { padding: 5px 6px; }
+      .task-meta { gap: 5px; }
+      .avatar { width: 34px; height: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">M</div><span class="brand-name">MyUni</span></div>
+      <p class="nav-label">Espai de treball</p>
+      <nav class="nav" aria-label="Navegació principal">
+        <button class="nav-button active" data-view="totes"><span class="nav-icon">⌂</span><span class="nav-text">Resum</span></button>
+        <button class="nav-button" data-view="avui"><span class="nav-icon">◷</span><span class="nav-text">Per avui</span><span class="nav-count" id="today-nav-count">0</span></button>
+        <button class="nav-button" data-view="pendents"><span class="nav-icon">▤</span><span class="nav-text">Tasques</span><span class="nav-count" id="pending-nav-count">0</span></button>
+        <button class="nav-button" data-view="completades"><span class="nav-icon">✓</span><span class="nav-text">Completades</span></button>
+      </nav>
+      <section class="projects-section">
+        <p class="nav-label">Els meus projectes</p>
+        <div id="sidebar-projects"></div>
+      </section>
+      <div class="sidebar-bottom">
+        <div class="tip-card"><div class="tip-icon">✨</div><strong>Un pas cada vegada</strong><p>Divideix els projectes grans en tasques petites i celebra cada progrés.</p></div>
+        <div class="sidebar-footer">El teu espai d’estudi, al teu ritme.</div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div class="date-line" id="today-date"></div>
+        <div class="top-actions">
+          <button class="icon-button" id="quick-add" aria-label="Afegir tasca" title="Afegir tasca">＋</button>
+          <div class="avatar" aria-label="El meu espai">U</div>
+        </div>
+      </header>
+      <section class="welcome">
+        <div><h1 id="greeting">Bon dia! 👋</h1><p id="welcome-copy">Organitza't i fes que avui compti.</p></div>
+        <button class="button-primary" id="add-task"><span>＋</span> Nova tasca</button>
+      </section>
+      <section class="stats" aria-label="Resum de tasques">
+        <article class="stat-card"><div class="stat-icon purple">📚</div><div><div class="stat-number" id="stat-pending">0</div><div class="stat-label">Tasques pendents</div></div></article>
+        <article class="stat-card"><div class="stat-icon green">✅</div><div><div class="stat-number" id="stat-completed">0</div><div class="stat-label">Tasques completades</div></div></article>
+        <article class="stat-card"><div class="stat-icon orange">🎯</div><div><div class="stat-number" id="stat-projects">0</div><div class="stat-label">Projectes actius</div></div></article>
+      </section>
+      <section class="content-grid">
+        <article class="panel tasks-panel">
+          <div class="panel-heading">
+            <div><h2 id="task-heading">Les meves tasques</h2><div class="heading-subtitle" id="task-subtitle">Tot el que tens entre mans</div></div>
+            <input class="search" id="task-search" type="search" placeholder="⌕  Cerca una tasca..." aria-label="Cerca tasques">
+          </div>
+          <div class="task-list" id="task-list"></div>
+        </article>
+        <div class="side-column">
+          <article class="panel progress-panel">
+            <div class="progress-title"><h2>El teu progrés</h2><span>Aquesta setmana</span></div>
+            <div class="progress-ring" id="progress-ring"><div class="progress-ring-inner"><span class="progress-percent" id="progress-percent">0%</span><span class="progress-caption">completat</span></div></div>
+            <p class="progress-note" id="progress-note"></p>
+          </article>
+          <article class="panel projects-panel">
+            <div class="projects-heading"><h2>Projectes</h2><button class="manage-link" id="manage-projects">Gestiona'ls</button></div>
+            <div id="project-cards"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="task-dialog">
+    <form class="dialog-content" id="task-form">
+      <div class="dialog-heading"><div><h2>Nova tasca</h2><p>Afegeix una tasca al teu espai d’estudi.</p></div><button class="close-dialog" type="button" data-close="task-dialog" aria-label="Tanca">×</button></div>
+      <div class="form-field"><label for="task-title">Què has de fer?</label><input id="task-title" name="title" maxlength="100" placeholder="Ex. Preparar la presentació" required></div>
+      <div class="form-grid">
+        <div class="form-field"><label for="task-project">Projecte</label><select id="task-project" name="project"></select></div>
+        <div class="form-field"><label for="task-due">Data límit</label><input id="task-due" name="due" type="date"></div>
+      </div>
+      <div class="form-field"><label for="task-priority">Prioritat</label><select id="task-priority" name="priority"><option value="mitjana">Mitjana</option><option value="alta">Alta</option><option value="baixa">Baixa</option></select></div>
+      <div class="dialog-actions"><button class="button-secondary" type="button" data-close="task-dialog">Cancel·la</button><button class="button-primary" type="submit">Desa la tasca</button></div>
+    </form>
+  </dialog>
+  <dialog id="project-dialog">
+    <form class="dialog-content" id="project-form">
+      <div class="dialog-heading"><div><h2 id="project-dialog-title">Nou projecte</h2><p id="project-dialog-copy">Dona un nom al projecte que vols organitzar.</p></div><button class="close-dialog" type="button" data-close="project-dialog" aria-label="Tanca">×</button></div>
+      <div class="form-field"><label for="project-name">Nom del projecte</label><input id="project-name" name="name" maxlength="45" placeholder="Ex. Treball de recerca" required></div>
+      <div class="form-field"><label for="project-color">Color</label><select id="project-color" name="color"><option value="#7165e8">Lila</option><option value="#36a68a">Verd</option><option value="#e7a240">Taronja</option><option value="#e16f7b">Rosa</option><option value="#5795d1">Blau</option></select></div>
+      <div class="dialog-actions"><button class="button-secondary" type="button" data-close="project-dialog">Cancel·la</button><button class="button-primary" id="save-project" type="submit">Crea el projecte</button></div>
+    </form>
+  </dialog>
+  <dialog id="manage-dialog">
+    <div class="dialog-content">
+      <div class="dialog-heading"><div><h2>Gestiona els projectes</h2><p>Crea, edita o elimina els projectes que necessitis.</p></div><button class="close-dialog" type="button" data-close="manage-dialog" aria-label="Tanca">×</button></div>
+      <div id="manage-project-list"></div>
+      <div class="dialog-actions"><button class="button-secondary" type="button" data-close="manage-dialog">Tanca</button><button class="button-primary" type="button" id="create-project">＋ Nou projecte</button></div>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "myuni-workspace-v1";
+      const palette = [
+        { color: "#7165e8", soft: "#f0efff", icon: "📐" },
+        { color: "#36a68a", soft: "#eaf7f2", icon: "🧪" },
+        { color: "#e7a240", soft: "#fff5e8", icon: "📖" },
+        { color: "#e16f7b", soft: "#fff0f2", icon: "🎨" },
+        { color: "#5795d1", soft: "#eef6fd", icon: "💡" }
+      ];
+      const today = localDate(new Date());
+      const initialState = {
+        projects: [
+          { id: "p1", name: "Treball de recerca", color: palette[0].color },
+          { id: "p2", name: "Anàlisi matemàtica", color: palette[1].color },
+          { id: "p3", name: "Història contemporània", color: palette[2].color }
+        ],
+        tasks: [
+          { id: "t1", title: "Revisar el marc teòric del treball", project: "p1", due: today, priority: "alta", done: false },
+          { id: "t2", title: "Resoldre els exercicis del tema 4", project: "p2", due: addDays(today, 1), priority: "mitjana", done: false },
+          { id: "t3", title: "Preparar bibliografia en format APA", project: "p1", due: addDays(today, 2), priority: "baixa", done: false },
+          { id: "t4", title: "Llegir el capítol sobre la postguerra", project: "p3", due: addDays(today, 3), priority: "mitjana", done: false },
+          { id: "t5", title: "Entregar el resum de la pràctica", project: "p2", due: addDays(today, -1), priority: "alta", done: true }
+        ]
+      };
+      let state = loadState();
+      let currentView = "totes";
+      let selectedProject = null;
+      let editingProjectId = null;
+      let toastTimer;
+
+      function localDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function addDays(dateString, days) {
+        const date = new Date(`${dateString}T12:00:00`);
+        date.setDate(date.getDate() + days);
+        return localDate(date);
+      }
+
+      function loadState() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (saved && Array.isArray(saved.projects) && Array.isArray(saved.tasks)) return saved;
+        } catch (error) {
+          console.warn("No s'han pogut carregar les dades desades.", error);
+        }
+        return structuredClone(initialState);
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (error) {
+          console.error("No s'han pogut desar les dades.", error);
+          showToast("No s'han pogut desar els canvis al navegador.");
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, char => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[char]);
+      }
+
+      function projectFor(id) {
+        return state.projects.find(project => project.id === id);
+      }
+
+      function formatDue(dateString) {
+        if (!dateString) return "Sense data";
+        const date = new Date(`${dateString}T12:00:00`);
+        if (dateString === today) return "Avui";
+        if (dateString === addDays(today, 1)) return "Demà";
+        if (dateString === addDays(today, -1)) return "Ahir";
+        return new Intl.DateTimeFormat("ca", { day: "numeric", month: "short" }).format(date);
+      }
+
+      function updateHeader() {
+        const now = new Date();
+        document.getElementById("today-date").textContent = new Intl.DateTimeFormat("ca", {
+          weekday: "long", day: "numeric", month: "long", year: "numeric"
+        }).format(now);
+        const hour = now.getHours();
+        document.getElementById("greeting").textContent = `${hour < 12 ? "Bon dia" : hour < 19 ? "Bona tarda" : "Bona nit"}! 👋`;
+        const active = state.tasks.filter(task => !task.done).length;
+        document.getElementById("welcome-copy").textContent = active
+          ? `Tens ${active} ${active === 1 ? "tasca pendent" : "tasques pendents"}. Organitza't i fes que avui compti.`
+          : "Tot al dia! Aprofita per avançar en els teus projectes.";
+      }
+
+      function render() {
+        updateHeader();
+        renderStats();
+        renderSidebarProjects();
+        renderTasks();
+        renderProjects();
+        renderProgress();
+        renderProjectOptions();
+        renderManageProjects();
+      }
+
+      function renderStats() {
+        const pending = state.tasks.filter(task => !task.done).length;
+        const completed = state.tasks.filter(task => task.done).length;
+        document.getElementById("stat-pending").textContent = pending;
+        document.getElementById("stat-completed").textContent = completed;
+        document.getElementById("stat-projects").textContent = state.projects.length;
+        document.getElementById("today-nav-count").textContent = state.tasks.filter(task => !task.done && task.due === today).length;
+        document.getElementById("pending-nav-count").textContent = pending;
+      }
+
+      function renderSidebarProjects() {
+        const container = document.getElementById("sidebar-projects");
+        container.innerHTML = state.projects.length ? state.projects.map(project => {
+          const count = state.tasks.filter(task => task.project === project.id && !task.done).length;
+          const active = selectedProject === project.id ? " active" : "";
+          return `<button class="project-link${active}" data-project="${escapeHtml(project.id)}"><span class="project-dot" style="background:${escapeHtml(project.color)}"></span><span class="nav-text">${escapeHtml(project.name)}</span><span class="nav-count">${count}</span></button>`;
+        }).join("") : `<p class="heading-subtitle" style="padding:0 11px">Encara no tens projectes.</p>`;
+      }
+
+      function filteredTasks() {
+        const query = document.getElementById("task-search").value.trim().toLocaleLowerCase("ca");
+        return state.tasks.filter(task => {
+          if (currentView === "avui" && (task.done || task.due !== today)) return false;
+          if (currentView === "pendents" && task.done) return false;
+          if (currentView === "completades" && !task.done) return false;
+          if (selectedProject && task.project !== selectedProject) return false;
+          const projectName = projectFor(task.project)?.name || "";
+          return !query || `${task.title} ${projectName}`.toLocaleLowerCase("ca").includes(query);
+        }).sort((a, b) => {
+          if (a.done !== b.done && currentView === "totes") return Number(a.done) - Number(b.done);
+          if (!a.due) return 1;
+          if (!b.due) return -1;
+          return a.due.localeCompare(b.due);
+        });
+      }
+
+      function renderTasks() {
+        const titles = {
+          totes: ["Les meves tasques", "Tot el que tens entre mans"],
+          avui: ["Per avui", "Les tasques que vencen avui"],
+          pendents: ["Tasques pendents", "Encara per fer"],
+          completades: ["Completades", "Tot el que ja has aconseguit"]
+        };
+        const [title, subtitle] = selectedProject
+          ? [projectFor(selectedProject)?.name || "Projecte", "Tasques d’aquest projecte"]
+          : titles[currentView];
+        document.getElementById("task-heading").textContent = title;
+        document.getElementById("task-subtitle").textContent = subtitle;
+        const tasks = filteredTasks();
+        const list = document.getElementById("task-list");
+        if (!tasks.length) {
+          list.innerHTML = `<div class="empty-state">${document.getElementById("task-search").value ? "No s’han trobat tasques." : "No hi ha tasques per mostrar. Afegeix-ne una per començar!"}</div>`;
+          return;
+        }
+        list.innerHTML = tasks.map(task => {
+          const project = projectFor(task.project);
+          const priorityName = task.priority || "mitjana";
+          const dueClass = task.due && task.due < today && !task.done ? ' style="color:#d66b64"' : "";
+          return `<div class="task-row${task.done ? " completed" : ""}">
+            <button class="task-check" data-toggle-task="${escapeHtml(task.id)}" aria-label="${task.done ? "Marca com a pendent" : "Marca com a completada"}">${task.done ? "✓" : ""}</button>
+            <div><div class="task-title">${escapeHtml(task.title)}</div><div class="task-meta">${project ? `<span class="meta-dot" style="background:${escapeHtml(project.color)}"></span><span>${escapeHtml(project.name)}</span><span>·</span>` : ""}<span${dueClass}>${escapeHtml(formatDue(task.due))}</span></div></div>
+            <div class="task-trailing"><span class="priority ${escapeHtml(priorityName)}">${escapeHtml(priorityName[0].toLocaleUpperCase("ca") + priorityName.slice(1))}</span><button class="delete-task" data-delete-task="${escapeHtml(task.id)}" aria-label="Elimina la tasca">×</button></div>
+          </div>`;
+        }).join("");
+      }
+
+      function renderProjects() {
+        const container = document.getElementById("project-cards");
+        if (!state.projects.length) {
+          container.innerHTML = `<div class="empty-state" style="padding:22px 8px">Crea un projecte per començar.</div>`;
+          return;
+        }
+        container.innerHTML = state.projects.map((project, index) => {
+          const tasks = state.tasks.filter(task => task.project === project.id);
+          const done = tasks.filter(task => task.done).length;
+          const percent = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+          const colors = palette.find(item => item.color === project.color) || palette[index % palette.length];
+          return `<div class="project-card"><div class="project-card-icon" style="--project-soft:${colors.soft}">${colors.icon}</div><div style="min-width:0"><div class="project-card-name">${escapeHtml(project.name)}</div><div class="project-card-count">${tasks.length} ${tasks.length === 1 ? "tasca" : "tasques"}</div></div><div class="project-card-progress" aria-label="${percent}% completat"><span style="width:${percent}%;--project-color:${escapeHtml(project.color)}"></span></div></div>`;
+        }).join("");
+      }
+
+      function renderProgress() {
+        const total = state.tasks.length;
+        const done = state.tasks.filter(task => task.done).length;
+        const percent = total ? Math.round(done / total * 100) : 0;
+        document.getElementById("progress-ring").style.setProperty("--progress", `${percent}%`);
+        document.getElementById("progress-percent").textContent = `${percent}%`;
+        document.getElementById("progress-note").textContent = total
+          ? `${done} de ${total} ${total === 1 ? "tasca completada" : "tasques completades"}. Cada pas t’acosta més a l’objectiu!`
+          : "Afegeix la teva primera tasca i comença a avançar.";
+      }
+
+      function renderProjectOptions() {
+        const select = document.getElementById("task-project");
+        const previous = select.value;
+        select.innerHTML = `<option value="">Sense projecte</option>` + state.projects.map(project =>
+          `<option value="${escapeHtml(project.id)}">${escapeHtml(project.name)}</option>`
+        ).join("");
+        if (state.projects.some(project => project.id === previous)) select.value = previous;
+      }
+
+      function renderManageProjects() {
+        const container = document.getElementById("manage-project-list");
+        container.innerHTML = state.projects.length ? state.projects.map(project => {
+          const count = state.tasks.filter(task => task.project === project.id).length;
+          return `<div class="project-manage-row"><span class="project-dot" style="background:${escapeHtml(project.color)}"></span><span class="project-manage-name">${escapeHtml(project.name)}</span><span class="project-manage-count">${count} ${count === 1 ? "tasca" : "tasques"}</span><button class="project-action edit-project" data-edit-project="${escapeHtml(project.id)}">Edita</button><button class="project-action delete-project" data-delete-project="${escapeHtml(project.id)}">Elimina</button></div>`;
+        }).join("") : `<div class="empty-state" style="padding:20px">Encara no tens cap projecte.</div>`;
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("visible");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("visible"), 2600);
+      }
+
+      function openTaskDialog() {
+        document.getElementById("task-form").reset();
+        document.getElementById("task-due").value = "";
+        document.getElementById("task-dialog").showModal();
+        document.getElementById("task-title").focus();
+      }
+
+      function openProjectDialog(projectId = null) {
+        const project = projectId ? projectFor(projectId) : null;
+        if (projectId && !project) {
+          showToast("No s’ha trobat el projecte.");
+          return;
+        }
+        editingProjectId = project?.id || null;
+        const form = document.getElementById("project-form");
+        form.reset();
+        document.getElementById("project-dialog-title").textContent = project ? "Edita el projecte" : "Nou projecte";
+        document.getElementById("project-dialog-copy").textContent = project
+          ? "Canvia el nom o el color del projecte."
+          : "Dona un nom al projecte que vols organitzar.";
+        document.getElementById("save-project").textContent = project ? "Desa els canvis" : "Crea el projecte";
+        if (project) {
+          document.getElementById("project-name").value = project.name;
+          document.getElementById("project-color").value = project.color;
+        }
+        document.getElementById("project-dialog").showModal();
+        document.getElementById("project-name").focus();
+      }
+
+      document.getElementById("add-task").addEventListener("click", openTaskDialog);
+      document.getElementById("quick-add").addEventListener("click", openTaskDialog);
+      document.getElementById("task-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        state.tasks.push({
+          id: crypto.randomUUID(),
+          title: String(formData.get("title")).trim(),
+          project: String(formData.get("project") || ""),
+          due: String(formData.get("due") || ""),
+          priority: String(formData.get("priority")),
+          done: false
+        });
+        saveState();
+        render();
+        document.getElementById("task-dialog").close();
+        showToast("Tasca afegida!");
+      });
+
+      document.getElementById("manage-projects").addEventListener("click", () => document.getElementById("manage-dialog").showModal());
+      document.getElementById("create-project").addEventListener("click", () => {
+        document.getElementById("manage-dialog").close();
+        openProjectDialog();
+      });
+      document.getElementById("project-dialog").addEventListener("close", () => {
+        editingProjectId = null;
+      });
+      document.getElementById("project-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const name = String(formData.get("name")).trim();
+        if (!name) {
+          showToast("El nom del projecte no pot estar buit.");
+          return;
+        }
+        if (state.projects.some(project => project.id !== editingProjectId && project.name.toLocaleLowerCase("ca") === name.toLocaleLowerCase("ca"))) {
+          showToast("Ja tens un projecte amb aquest nom.");
+          return;
+        }
+        if (editingProjectId) {
+          const project = projectFor(editingProjectId);
+          if (!project) {
+            showToast("No s’ha trobat el projecte.");
+            return;
+          }
+          project.name = name;
+          project.color = String(formData.get("color"));
+        } else {
+          state.projects.push({ id: crypto.randomUUID(), name, color: String(formData.get("color")) });
+        }
+        saveState();
+        render();
+        document.getElementById("project-dialog").close();
+        showToast(editingProjectId ? "Projecte actualitzat!" : "Projecte creat!");
+        editingProjectId = null;
+      });
+
+      document.body.addEventListener("click", event => {
+        const closeButton = event.target.closest("[data-close]");
+        if (closeButton) document.getElementById(closeButton.dataset.close).close();
+        const toggleButton = event.target.closest("[data-toggle-task]");
+        if (toggleButton) {
+          const task = state.tasks.find(item => item.id === toggleButton.dataset.toggleTask);
+          if (task) task.done = !task.done;
+          saveState();
+          render();
+        }
+        const deleteTaskButton = event.target.closest("[data-delete-task]");
+        if (deleteTaskButton) {
+          state.tasks = state.tasks.filter(task => task.id !== deleteTaskButton.dataset.deleteTask);
+          saveState();
+          render();
+          showToast("Tasca eliminada.");
+        }
+        const projectButton = event.target.closest("[data-project]");
+        if (projectButton) {
+          selectedProject = selectedProject === projectButton.dataset.project ? null : projectButton.dataset.project;
+          currentView = "totes";
+          document.querySelectorAll(".nav-button").forEach(button => button.classList.toggle("active", button.dataset.view === "totes" && !selectedProject));
+          renderSidebarProjects();
+          renderTasks();
+        }
+        const editProjectButton = event.target.closest("[data-edit-project]");
+        if (editProjectButton) {
+          document.getElementById("manage-dialog").close();
+          openProjectDialog(editProjectButton.dataset.editProject);
+        }
+        const deleteProjectButton = event.target.closest("[data-delete-project]");
+        if (deleteProjectButton) {
+          const project = projectFor(deleteProjectButton.dataset.deleteProject);
+          if (!project || !window.confirm(`Eliminar el projecte «${project.name}»? Les tasques es conservaran sense projecte.`)) return;
+          state.projects = state.projects.filter(item => item.id !== project.id);
+          state.tasks.forEach(task => { if (task.project === project.id) task.project = ""; });
+          if (selectedProject === project.id) selectedProject = null;
+          saveState();
+          render();
+          showToast("Projecte eliminat. Les tasques s’han conservat.");
+        }
+        const navButton = event.target.closest("[data-view]");
+        if (navButton) {
+          currentView = navButton.dataset.view;
+          selectedProject = null;
+          document.querySelectorAll(".nav-button").forEach(button => button.classList.toggle("active", button === navButton));
+          renderSidebarProjects();
+          renderTasks();
+        }
+      });
+
+      document.getElementById("task-search").addEventListener("input", renderTasks);
+      render();
+    })();
+  </script>
+</body>
+</html>

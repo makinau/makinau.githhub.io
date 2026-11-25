@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Llista de la compra - Makinau</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.5rem;
+      background:
+        radial-gradient(ellipse at top, rgba(37, 99, 235, 0.18), transparent 55%),
+        #0b1120;
+      color: #e5e7eb;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    main {
+      width: min(100%, 42rem);
+      margin: 0 auto;
+    }
+
+    a, button {
+      font: inherit;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #bfdbfe;
+    }
+
+    .card {
+      margin-bottom: 1rem;
+      padding: clamp(1.25rem, 5vw, 2rem);
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid #263248;
+      border-radius: 1.25rem;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    h1, h2 {
+      margin-top: 0;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      margin-bottom: 0.4rem;
+      font-size: clamp(1.8rem, 6vw, 2.4rem);
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .muted, .empty {
+      color: #9ca3af;
+    }
+
+    .muted {
+      margin: 0;
+    }
+
+    form {
+      display: flex;
+      gap: 0.65rem;
+    }
+
+    input, button {
+      min-height: 2.8rem;
+      border-radius: 0.65rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      min-width: 0;
+      padding: 0.65rem 0.8rem;
+      color: #f9fafb;
+      background: #0b1120;
+      border: 1px solid #475569;
+    }
+
+    button {
+      padding: 0.65rem 1rem;
+      color: white;
+      background: #2563eb;
+      border: 1px solid transparent;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:focus-visible, a:focus-visible, input:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 3px;
+    }
+
+    .store-form button {
+      flex: 0 0 auto;
+    }
+
+    .store-list, .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .store-chip, .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.6rem;
+      color: #dbeafe;
+      background: #1e3a5f;
+      border: 1px solid #31547b;
+      border-radius: 999px;
+      font-size: 0.85rem;
+    }
+
+    .store-chip button {
+      min-height: 0;
+      padding: 0;
+      color: #fecaca;
+      background: transparent;
+      border: 0;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .store-chip button:hover {
+      color: white;
+      background: transparent;
+    }
+
+    .shopping-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 0.75rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #263248;
+    }
+
+    .shopping-item:last-child {
+      border-bottom: 0;
+    }
+
+    .item-check {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin-top: 0.8rem;
+      accent-color: #2563eb;
+    }
+
+    .item-content {
+      min-width: 0;
+    }
+
+    .shopping-item.done input[type="text"] {
+      color: #9ca3af;
+      text-decoration: line-through;
+    }
+
+    .tag-editor {
+      margin-top: 0.6rem;
+    }
+
+    .tag-editor summary {
+      width: fit-content;
+      color: #bfdbfe;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .tag-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.65rem;
+    }
+
+    .tag-options label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    .tag-options input {
+      accent-color: #2563eb;
+    }
+
+    .delete-item {
+      min-height: 2.5rem;
+      padding: 0.45rem 0.7rem;
+      color: #fecaca;
+      background: transparent;
+      border-color: #7f1d1d;
+    }
+
+    .delete-item:hover {
+      background: #7f1d1d;
+    }
+
+    .empty {
+      margin-bottom: 0;
+    }
+
+    .status {
+      min-height: 1.4rem;
+      margin: 0.75rem 0 0;
+      color: #fca5a5;
+      font-size: 0.9rem;
+    }
+
+    #shopping-app[hidden], #auth-status[hidden] {
+      display: none;
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 1rem;
+      }
+
+      .shopping-item {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .delete-item {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back-link" href="index.html">← Tornar a l’inici</a>
+    <header class="card">
+      <h1>Llista de la compra</h1>
+      <p class="muted">Llista compartida per als usuaris d’OurHouse.</p>
+    </header>
+
+    <section id="auth-status" class="card" aria-live="polite">
+      <p id="auth-message" class="muted">Comprovant la sessió d’OurHouse…</p>
+      <a id="auth-link" href="https://makinau.github.io/OurHouse/" target="_blank" rel="noopener noreferrer" hidden>Inicia sessió a OurHouse i torna a aquesta pàgina</a>
+    </section>
+
+    <div id="shopping-app" hidden>
+      <section class="card" aria-labelledby="add-item-heading">
+        <h2 id="add-item-heading">Afegir un article</h2>
+        <form id="item-form">
+          <input id="item-name" type="text" maxlength="120" placeholder="Ex.: Pa" aria-label="Nom de l’article" required>
+          <button type="submit">Afegir</button>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="stores-heading">
+        <h2 id="stores-heading">Establiments i etiquetes</h2>
+        <form id="store-form" class="store-form">
+          <input id="store-name" type="text" maxlength="40" placeholder="Ex.: Mercat" aria-label="Nom de l’establiment" required>
+          <button type="submit">Afegir etiqueta</button>
+        </form>
+        <div id="store-list" class="store-list" aria-label="Establiments desats"></div>
+      </section>
+
+      <section class="card" aria-labelledby="list-heading">
+        <h2 id="list-heading">Articles</h2>
+        <div id="items-list"></div>
+        <p id="empty-message" class="empty">Encara no hi ha articles. Afegeix-ne un per començar.</p>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    if (!window.supabase?.createClient) {
+      document.querySelector("#auth-message").textContent = "No s’ha pogut carregar el client de Supabase.";
+      throw new Error("El client de Supabase no està disponible.");
+    }
+
+    const SUPABASE_URL = "https://ervlgxziksargjncwogu.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_RmLqHIC7mZ_YnVJyxFHQxg_4ziCyTgl";
+    const SHOPPING_ITEMS_TABLE = "shopping_items";
+    const SHOPPING_STORES_TABLE = "shopping_stores";
+    const ITEM_STORES_TABLE = "shopping_item_stores";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const itemForm = document.querySelector("#item-form");
+    const itemNameInput = document.querySelector("#item-name");
+    const storeForm = document.querySelector("#store-form");
+    const storeNameInput = document.querySelector("#store-name");
+    const storeList = document.querySelector("#store-list");
+    const itemsList = document.querySelector("#items-list");
+    const emptyMessage = document.querySelector("#empty-message");
+    const status = document.querySelector("#status");
+    const authStatus = document.querySelector("#auth-status");
+    const authMessage = document.querySelector("#auth-message");
+    const authLink = document.querySelector("#auth-link");
+    const shoppingApp = document.querySelector("#shopping-app");
+    let data = { items: [], stores: [] };
+    let currentUserId = null;
+    let busy = false;
+
+    function setBusy(value) {
+      busy = value;
+      shoppingApp.querySelectorAll("button, input").forEach((control) => {
+        control.disabled = value;
+      });
+    }
+
+    function checkResult(result) {
+      if (result.error) throw result.error;
+      return result.data;
+    }
+
+    async function loadData() {
+      const requestedUserId = currentUserId;
+      const [storeResult, itemResult, linkResult] = await Promise.all([
+        supabaseClient.from(SHOPPING_STORES_TABLE).select("id, name").order("name"),
+        supabaseClient.from(SHOPPING_ITEMS_TABLE).select("id, name, done, created_at").order("created_at"),
+        supabaseClient.from(ITEM_STORES_TABLE).select("item_id, store_id")
+      ]);
+      const stores = checkResult(storeResult);
+      const rows = checkResult(itemResult);
+      const links = checkResult(linkResult);
+      if (currentUserId !== requestedUserId) return;
+
+      const storeIdsByItem = new Map();
+      links.forEach(({ item_id, store_id }) => {
+        const storeIds = storeIdsByItem.get(item_id) ?? [];
+        storeIds.push(store_id);
+        storeIdsByItem.set(item_id, storeIds);
+      });
+      data = {
+        stores,
+        items: rows.map((item) => ({
+          ...item,
+          stores: storeIdsByItem.get(item.id) ?? []
+        }))
+      };
+      render();
+    }
+
+    function renderStores() {
+      storeList.replaceChildren();
+      data.stores.forEach((store) => {
+        const chip = document.createElement("span");
+        chip.className = "store-chip";
+        const name = document.createElement("span");
+        name.textContent = store.name;
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", `Eliminar l’etiqueta ${store.name}`);
+        remove.addEventListener("click", () => {
+          void runAction(async () => {
+            checkResult(await supabaseClient.from(SHOPPING_STORES_TABLE).delete().eq("id", store.id));
+          });
+        });
+        chip.append(name, remove);
+        storeList.append(chip);
+      });
+    }
+
+    function renderItems() {
+      itemsList.replaceChildren();
+      emptyMessage.hidden = data.items.length > 0;
+
+      data.items.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = `shopping-item${item.done ? " done" : ""}`;
+
+        const check = document.createElement("input");
+        check.type = "checkbox";
+        check.className = "item-check";
+        check.checked = item.done;
+        check.setAttribute("aria-label", `Marcar ${item.name} com a comprat`);
+        check.addEventListener("change", () => {
+          void runAction(async () => {
+            checkResult(await supabaseClient.from(SHOPPING_ITEMS_TABLE).update({ done: check.checked }).eq("id", item.id));
+          });
+        });
+
+        const content = document.createElement("div");
+        content.className = "item-content";
+        const name = document.createElement("input");
+        name.type = "text";
+        name.maxLength = 120;
+        name.value = item.name;
+        name.setAttribute("aria-label", "Editar nom de l’article");
+        name.addEventListener("change", () => {
+          const value = name.value.trim();
+          if (!value) {
+            name.value = item.name;
+            return;
+          }
+          void runAction(async () => {
+            checkResult(await supabaseClient.from(SHOPPING_ITEMS_TABLE).update({ name: value }).eq("id", item.id));
+          });
+        });
+        content.append(name);
+
+        if (item.stores.length) {
+          const tags = document.createElement("div");
+          tags.className = "tags";
+          item.stores.forEach((storeId) => {
+            const store = data.stores.find((entry) => entry.id === storeId);
+            if (!store) return;
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = store.name;
+            tags.append(tag);
+          });
+          content.append(tags);
+        }
+
+        if (data.stores.length) {
+          const details = document.createElement("details");
+          details.className = "tag-editor";
+          const summary = document.createElement("summary");
+          summary.textContent = `Etiquetes (${item.stores.length})`;
+          const options = document.createElement("div");
+          options.className = "tag-options";
+          data.stores.forEach((store) => {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = item.stores.includes(store.id);
+            checkbox.addEventListener("change", () => {
+              void runAction(async () => {
+                if (checkbox.checked) {
+                  checkResult(await supabaseClient.from(ITEM_STORES_TABLE).insert({
+                    item_id: item.id,
+                    store_id: store.id
+                  }));
+                } else {
+                  checkResult(await supabaseClient.from(ITEM_STORES_TABLE)
+                    .delete()
+                    .eq("item_id", item.id)
+                    .eq("store_id", store.id));
+                }
+              });
+            });
+            label.append(checkbox, document.createTextNode(store.name));
+            options.append(label);
+          });
+          details.append(summary, options);
+          content.append(details);
+        }
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "delete-item";
+        remove.textContent = "Eliminar";
+        remove.setAttribute("aria-label", `Eliminar ${item.name}`);
+        remove.addEventListener("click", () => {
+          void runAction(async () => {
+            checkResult(await supabaseClient.from(SHOPPING_ITEMS_TABLE).delete().eq("id", item.id));
+          });
+        });
+
+        row.append(check, content, remove);
+        itemsList.append(row);
+      });
+    }
+
+    function render() {
+      renderStores();
+      renderItems();
+      setBusy(busy);
+    }
+
+    async function runAction(action) {
+      if (busy) return;
+      setBusy(true);
+      status.textContent = "Desant els canvis…";
+      try {
+        await action();
+        await loadData();
+        status.textContent = "";
+      } catch (error) {
+        status.textContent = `No s’han pogut desar els canvis: ${error.message}`;
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    itemForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (busy) return;
+      const name = itemNameInput.value.trim();
+      if (!name) return;
+      void runAction(async () => {
+        checkResult(await supabaseClient.from(SHOPPING_ITEMS_TABLE).insert({ name }));
+        itemForm.reset();
+        itemNameInput.focus();
+      });
+    });
+
+    storeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (busy) return;
+      const name = storeNameInput.value.trim();
+      if (!name) return;
+      void runAction(async () => {
+        checkResult(await supabaseClient.from(SHOPPING_STORES_TABLE).insert({ name }));
+        storeForm.reset();
+        storeNameInput.focus();
+      });
+    });
+
+    async function updateSession(session) {
+      const userId = session?.user?.id ?? null;
+      if (!userId) {
+        currentUserId = null;
+        data = { items: [], stores: [] };
+        shoppingApp.hidden = true;
+        authStatus.hidden = false;
+        authMessage.textContent = "Inicia sessió a OurHouse per veure i editar la llista compartida.";
+        authLink.hidden = false;
+        return;
+      }
+
+      if (userId === currentUserId) return;
+      currentUserId = userId;
+      authStatus.hidden = true;
+      shoppingApp.hidden = false;
+      status.textContent = "Carregant la llista compartida…";
+      try {
+        await loadData();
+        if (currentUserId === userId) status.textContent = "";
+      } catch (error) {
+        if (currentUserId === userId) {
+          status.textContent = `No s’ha pogut carregar la llista: ${error.message}`;
+        }
+      }
+    }
+
+    supabaseClient.auth.onAuthStateChange((_event, session) => {
+      queueMicrotask(() => {
+        void updateSession(session);
+      });
+    });
+  </script>
+</body>
+</html>

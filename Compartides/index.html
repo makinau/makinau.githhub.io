@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benvingut/da al meu lloc web</title>
+  
+  <style>
+    /* Reset bàsic i configuració de font */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Contenidor central */
+    .hero-container {
+      max-width: 800px;
+      text-align: center;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    /* Etiqueta / Subtítol superior */
+    .badge {
+      display: inline-block;
+      background-color: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    /* Títol principal */
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Text descriptiu */
+    p.description {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+
+    /* Botons d'acció */
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+    }
+
+    .btn-primary:hover {
+      background-color: #0369a1;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: #f8fafc;
+      border: 1px solid #475569;
+    }
+
+    .btn-secondary:hover {
+      background-color: #334155;
+      transform: translateY(-2px);
+    }
+
+    /* Peu de pàgina */
+    footer {
+      color: #64748b;
+      font-size: 0.875rem;
+      padding-top: 20px;
+    }
+
+    /* Adaptació a pantalles petites */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      p.description {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="hero-container">
+    <span class="badge">Benvingut/da</span>
+    <h1>Coordinació de les assignatures de l'àmbit industrial</h1>
+    <p class="description">
+      Hi trobaràs tota la informacio que s'ha anat generant, links importants i informació. 
+    </p>
+
+    <p class="description"> 
+      Intentem presentar la informació de manera clara i entenedora.
+    </p>
+    <div class="cta-buttons">
+      <a href="assignacions_grups_graus_2026.html" class="btn btn-primary">Assignació de grups per cada grau (setembre 2026)</a>
+      
+    </div>
+  </main>
+  <a href="#contacte" class="btn btn-secondary">Contacta amb mi - Dani Macaya 658803032 (Whatsapp)</a>
+  <footer>
+    <p>&copy; 2026 Dani Macaya Masferrer. Tots els drets reservats.</p>
+  </footer>
+
+</body>
+</html>

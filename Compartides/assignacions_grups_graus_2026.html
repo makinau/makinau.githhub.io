@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignacions de Grups per Grau</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #0f172a;
+            text-align: center;
+        }
+
+        /* Llegenda */
+        .llegenda {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .llegenda-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Selector */
+        .selector-box {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fff;
+            color: var(--text);
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Resultats */
+        .result-box {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .result-title {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .bloc-grup {
+            margin-bottom: 1.5rem;
+        }
+
+        .bloc-grup h3 {
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-light);
+            font-weight: 600;
+            width: 30%;
+        }
+
+        tr:last-child td, tr:last-child th {
+            border-bottom: none;
+        }
+
+        .nota-oge {
+            font-size: 0.85rem;
+            color: #b45309;
+            background-color: #fffbeb;
+            padding: 0.5rem;
+            border-left: 4px solid #f59e0b;
+            margin-top: 1rem;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 1rem 0.5rem; }
+            th, td { padding: 0.5rem 0.75rem; }
+            th { width: 40%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Consultor d'Assignacions per Grau</h1>
+
+    <div class="llegenda">
+        <div class="llegenda-item"><span class="badge">E</span> GEEIA + GEE + DT</div>
+        <div class="llegenda-item"><span class="badge">B</span> GEB</div>
+        <div class="llegenda-item"><span class="badge">M</span> GEM</div>
+        <div class="llegenda-item"><span class="badge">Q</span> GEQ</div>
+    </div>
+
+    <div class="selector-box">
+        <label for="assignatura-select">Tria una assignatura:</label>
+        <select id="assignatura-select" onchange="mostrarAssignatura()">
+            <option value="" disabled selected>-- Selecciona --</option>
+            </select>
+    </div>
+
+    <div id="result-box" class="result-box">
+        <h2 id="nom-assignatura" class="result-title"></h2>
+        
+        <div class="bloc-grup">
+            <h3>Grups de Teoria</h3>
+            <div class="table-container">
+                <table id="taula-teoria"></table>
+            </div>
+        </div>
+
+        <div class="bloc-grup">
+            <h3>Grups de Problemes</h3>
+            <div class="table-container">
+                <table id="taula-problemes"></table>
+            </div>
+        </div>
+
+        <div class="bloc-grup">
+            <h3>Grups de Pràctiques</h3>
+            <div class="table-container">
+                <table id="taula-practiques"></table>
+            </div>
+        </div>
+
+        <div id="nota-extra" class="nota-oge" style="display: none;"></div>
+    </div>
+</div>
+
+<script>
+    // Base de dades extreta del teu CSV
+    const dadesAssignatures = {
+        "Estadística": {
+            teoria: {"T1": "E", "T2": "M+Q", "T3": "B+Q+M"},
+            problemes: {"P1": "E", "P2": "M+Q", "P3": "B+E", "P4": "Q+M"},
+            practiques: {"1": "E", "2": "M", "3": "M", "4": "M", "5": "M", "6": "B", "7": "B+Q", "8": "E+M", "9": "E", "10": "E", "11": "Q"}
+        },
+        "Enginyeria Fluïdomecànica": {
+            teoria: {"T1": "E+Q", "T2": "M"},
+            problemes: {"P1": "E+Q", "P2": "E", "P3": "M", "P4": "M"},
+            practiques: {"1": "E", "2": "E", "3": "Q", "4": "E", "5": "M", "6": "M", "7": "M", "8": "M", "9": "E", "10": "M", "11": "M", "12": "M", "13": "E", "14": "M+Q"}
+        },
+        "Termotècnia Aplicada": {
+            teoria: {"T1": "E+Q", "T2": "M"},
+            problemes: {"P1": "E+Q", "P2": "M", "P3": "E", "P4": "M"},
+            practiques: {"1": "E", "2": "E", "3": "E", "4": "E", "5": "Q", "6": "M", "7": "M", "8": "M", "9": "Q", "10": "M", "11": "E", "12": "E+Q", "13": "M", "14": "M"}
+        },
+        "Resistència de materials": {
+            teoria: {"T1": "E", "T2": "E+Q"},
+            problemes: {"P1": "E", "P2": "E+Q"},
+            practiques: {"1": "E", "2": "E", "3": "E", "4": "E", "5": "Q", "6": "Q", "7": "E", "8": "E+Q", "9": "E"}
+        },
+        "Organització i Gestió de Empreses": {
+            teoria: {"T1": "E+B", "T2": "M+Q"},
+            problemes: {"P1": "B+Q", "P2": "E+M", "P3": "M"},
+            practiques: {"1": "Q", "2": "M", "3": "E", "4": "B+E+M+Q", "5": "B", "6": "E", "7": "M", "8": "M"},
+            nota: "* Falta acabar de decidir amb els profes d'OGE"
+        },
+        "Tecnologia del Medi Ambient": {
+            teoria: {"T1": "E+M"},
+            problemes: {},
+            practiques: {"1": "E", "2": "E", "3": "E+M", "4": "M", "5": "M", "6": "M"}
+        },
+        "Gestió de la producció": {
+            teoria: {"T1": "E", "T2": "M+Q", "T3": "M+Q"},
+            problemes: {"P1": "E", "P2": "M+Q", "P3": "M+Q"},
+            practiques: {"1": "M", "2": "M", "3": "M", "4": "E", "5": "E", "6": "M", "7": "E+M", "8": "Q", "9": "Q"}
+        },
+        "Fonaments d'electrònica": {
+            teoria: {"T1": "E+B", "T2": "E+B"},
+            problemes: {"P1": "E+B", "P2": "E+B"},
+            practiques: {"1": "E", "2": "E", "3": "E", "4": "E", "5": "B", "6": "B", "7": "E", "8": "E", "9": "E+B", "10": "E"}
+        },
+        "Teoria de circuits": {
+            teoria: {"T1": "E", "T2": "B", "T3": "E"},
+            problemes: {"P1": "E", "P2": "B", "P3": "E"},
+            practiques: {"1": "E", "2": "E", "3": "E", "4": "E", "5": "B", "6": "B", "7": "B", "8": "B+E", "9": "E", "10": "E", "11": "E", "12": "E", "13": "E"}
+        },
+        "Instrumentació Electònica": {
+            teoria: {"T1": "E", "T2": "B"},
+            problemes: {"P1": "E", "P2": "B"},
+            practiques: {"1": "E", "2": "E", "3": "E+B", "4": "B", "5": "B", "6": "B", "7": "E", "8": "B"}
+        },
+        "Desenvolupament de projectes d'Electrònica": {
+            teoria: {"T1": "E", "T2": "B"},
+            problemes: {"P1": "E", "P2": "B"},
+            practiques: {"1": "E", "2": "E+B", "3": "E", "4": "B", "5": "B", "6": "B"}
+        },
+        "Sistemes Robotitzats": {
+            teoria: {"T1": "E+B"},
+            problemes: {"P1": "E+B"},
+            practiques: {"1": "E", "2": "E+B", "3": "B", "4": "B"}
+        }
+    };
+
+    // Població inicial del desplegable
+    const select = document.getElementById('assignatura-select');
+    for (const assignatura in dadesAssignatures) {
+        let opt = document.createElement('option');
+        opt.value = assignatura;
+        opt.innerHTML = assignatura;
+        select.appendChild(opt);
+    }
+
+    // Funció que renderitza les taules en canviar la selecció
+    function mostrarAssignatura() {
+        const assignaturaSeleccionada = select.value;
+        const dades = dadesAssignatures[assignaturaSeleccionada];
+        
+        if (!dades) return;
+
+        document.getElementById('nom-assignatura').innerText = assignaturaSeleccionada;
+
+        // Generar taules helpers
+        generarTaula('taula-teoria', dades.teoria);
+        generarTaula('taula-problemes', dades.problemes);
+        generarTaula('taula-practiques', dades.practiques);
+
+        // Mostrar nota extra (per OGE si en té)
+        const notaExtra = document.getElementById('nota-extra');
+        if (dades.nota) {
+            notaExtra.innerText = dades.nota;
+            notaExtra.style.display = 'block';
+        } else {
+            notaExtra.style.display = 'none';
+        }
+
+        // Fer visible el bloc de resultats
+        document.getElementById('result-box').style.display = 'block';
+    }
+
+    function generarTaula(idTaula, objecteDades) {
+        const taula = document.getElementById(idTaula);
+        taula.innerHTML = ''; // Netejar contingut previ
+
+        const claus = Object.keys(objecteDades);
+        
+        if (claus.length === 0) {
+            taula.innerHTML = '<tr><td colspan="2" style="color: var(--text-light); font-style: italic;">No hi ha grups assignats o especificats</td></tr>';
+            return;
+        }
+
+        // Crear capçalera
+        let headerRow = '<tr><th>Grup</th><th>Graus Assignats</th></tr>';
+        taula.innerHTML += headerRow;
+
+        // Omplir files
+        claus.forEach(grup => {
+            let valor = objecteDades[grup] || '-';
+            // Donar un format una mica més polit si està buit al CSV original
+            if(valor.trim() === "") valor = "-";
+            
+            let fila = `<tr>
+                <td><strong>${grup}</strong></td>
+                <td>${valor}</td>
+            </tr>`;
+            taula.innerHTML += fila;
+        });
+    }
+</script>
+
+</body>
+</html>
