@@ -166,6 +166,22 @@
       const STORAGE_KEY = "ourhouse-items-v1";
       const DATA_ROW_ID = "home";
       const { url, anonKey } = window.OURHOUSE_SUPABASE_CONFIG;
+      const authStorageKey = url
+        ? `sb-${new URL(url).hostname.split(".")[0]}-auth-token`
+        : null;
+      if (authStorageKey) {
+        const legacyAuthKeys = [];
+        if (sessionStorage.getItem(authStorageKey) !== null) legacyAuthKeys.push(authStorageKey);
+        for (let chunk = 0; sessionStorage.getItem(`${authStorageKey}.${chunk}`) !== null; chunk += 1) {
+          legacyAuthKeys.push(`${authStorageKey}.${chunk}`);
+        }
+        const hasLocalSession = localStorage.getItem(authStorageKey) !== null
+          || localStorage.getItem(`${authStorageKey}.0`) !== null;
+        if (!hasLocalSession && legacyAuthKeys.length) {
+          for (const key of legacyAuthKeys) localStorage.setItem(key, sessionStorage.getItem(key));
+        }
+        for (const key of legacyAuthKeys) sessionStorage.removeItem(key);
+      }
       const supabase = url && anonKey && window.supabase
         ? window.supabase.createClient(url, anonKey, {
           auth: { storage: window.localStorage, persistSession: true, autoRefreshToken: true }
